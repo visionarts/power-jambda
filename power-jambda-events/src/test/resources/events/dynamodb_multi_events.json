@@ -1,0 +1,122 @@
+{
+  "Records": [
+    {
+      "eventID": "1",
+      "eventVersion": "1.0",
+      "dynamodb": {
+        "ApproximateCreationDateTime": 1475477220,
+        "Keys": {
+          "TaskID": {
+            "N": "101"
+          }
+        },
+        "NewImage": {
+          "Action": {
+            "S": "com.visionarts.powerjambda.actions.TestAction1"
+          },
+          "RequestBody": {
+            "S": "{\"message\":\"test\"}"
+          },
+          "TaskID": {
+            "N": "101"
+          }
+        },
+        "StreamViewType": "NEW_AND_OLD_IMAGES",
+        "SequenceNumber": "111",
+        "SizeBytes": 26
+      },
+      "awsRegion": "us-west-2",
+      "eventName": "INSERT",
+      "eventSourceARN": "arn:aws:dynamodb:us-west-2:account-id:table/ExampleTableWithStream/stream/2015-06-27T00:48:05.899",
+      "eventSource": "aws:dynamodb"
+    },
+    {
+      "eventID": "2",
+      "eventVersion": "1.0",
+      "dynamodb": {
+        "ApproximateCreationDateTime": 1475477220,
+        "Keys": {
+          "TaskID": {
+            "N": "102"
+          }
+        },
+        "NewImage": {
+          "Action": {
+            "S": "com.visionarts.powerjambda.actions.TestActionAlwaysOccurException"
+          },
+          "RequestBody": {
+            "S": "{\"message\":\"test2\"}"
+          },
+          "TaskID": {
+            "N": "102"
+          }
+        },
+        "StreamViewType": "NEW_AND_OLD_IMAGES",
+        "SequenceNumber": "111",
+        "SizeBytes": 26
+      },
+      "awsRegion": "us-west-2",
+      "eventName": "INSERT",
+      "eventSourceARN": "arn:aws:dynamodb:us-west-2:account-id:table/ExampleTableWithStream/stream/2015-06-27T00:48:05.899",
+      "eventSource": "aws:dynamodb"
+    },
+    {
+      "eventID": "3",
+      "eventVersion": "1.0",
+      "dynamodb": {
+        "ApproximateCreationDateTime": 1475477220,
+        "Keys": {
+          "TaskID": {
+            "N": "101"
+          }
+        },
+        "NewImage": {
+          "RequestPayload": {
+            "S": "{\"action\":\"com.visionarts.powerjambda.actions.TestAction1\",\"body\":{\"message\":\"test2\"},\"method\":\"POST\",\"remoteAddr\":\"test-invoke-source-ip\",\"stage\":\"test-invoke-stage\",\"stageVariables\":{},\"path\":\"/test_errorr_res\",\"headers\":{\"User-Agent\":\"Apache-HttpClient/4.3.4 (java 1.5)\"},\"pathParams\":{},\"queryParams\":{}}"
+          },
+          "TaskID": {
+            "N": "101"
+          }
+        },
+        "StreamViewType": "NEW_AND_OLD_IMAGES",
+        "SequenceNumber": "111",
+        "SizeBytes": 26
+      },
+      "awsRegion": "us-west-2",
+      "eventName": "REMOVE",
+      "eventSourceARN": "arn:aws:dynamodb:us-west-2:account-id:table/ExampleTableWithStream/stream/2015-06-27T00:48:05.899",
+      "eventSource": "aws:dynamodb"
+    },
+    {
+      "eventID": "4",
+      "eventVersion": "1.0",
+      "dynamodb": {
+        "ApproximateCreationDateTime": 1475477220,
+        "Keys": {
+          "TaskID": {
+            "N": "104"
+          }
+        },
+        "NewImage": {
+          "Action": {
+            "S": "com.visionarts.powerjambda.actions.TestAction1"
+          },
+          "RequestBody": {
+            "S": "{\"message\":\"test4\"}"
+          },
+          "TaskID": {
+            "N": "104"
+          }
+        },
+        "StreamViewType": "NEW_AND_OLD_IMAGES",
+        "SequenceNumber": "111",
+        "SizeBytes": 26
+      },
+      "awsRegion": "us-west-2",
+      "eventName": "INSERT",
+      "eventSourceARN": "arn:aws:dynamodb:us-west-2:account-id:table/ExampleTableWithStream/stream/2015-06-27T00:48:05.899",
+      "eventSource": "aws:dynamodb"
+    }
+  ]
+}
+

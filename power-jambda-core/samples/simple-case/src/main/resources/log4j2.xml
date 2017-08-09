@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="off">
+  <Appenders>
+    <Lambda name="Lambda">
+      <JSONLayout compact="true" eventEol="true" properties="true" locationInfo="false" />
+    </Lambda>
+  </Appenders>
+  <Loggers>
+    <Root level="info">
+      <AppenderRef ref="Lambda" />
+    </Root>
+  </Loggers>
+</Configuration>

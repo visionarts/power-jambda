@@ -1,0 +1,9 @@
+{
+  "detail-type": "Scheduled Event",
+  "source": "aws.events",
+  "detail" : {
+    "body": {
+    },
+    "action": "com.visionarts.powerjambda.actions.TestScheduledAction"
+  }
+}

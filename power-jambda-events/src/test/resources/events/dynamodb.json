@@ -1,0 +1,35 @@
+{
+  "Records": [
+    {
+      "eventID": "1",
+      "eventVersion": "1.0",
+      "dynamodb": {
+        "ApproximateCreationDateTime": 1475477220,
+        "Keys": {
+          "TaskID": {
+            "N": "101"
+          }
+        },
+        "NewImage": {
+          "Action": {
+            "S": "com.visionarts.powerjambda.actions.TestAction1"
+          },
+          "RequestBody": {
+            "S": "{\"message\":\"test\"}"
+          },
+          "TaskID": {
+            "N": "101"
+          }
+        },
+        "StreamViewType": "NEW_AND_OLD_IMAGES",
+        "SequenceNumber": "111",
+        "SizeBytes": 26
+      },
+      "awsRegion": "us-west-2",
+      "eventName": "INSERT",
+      "eventSourceARN": "arn:aws:dynamodb:us-west-2:account-id:table/ExampleTableWithStream/stream/2015-06-27T00:48:05.899",
+      "eventSource": "aws:dynamodb"
+    }
+  ]
+}
+

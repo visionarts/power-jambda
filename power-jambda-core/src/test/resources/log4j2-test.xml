@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="off">
+  <Appenders>
+    <Lambda name="Lambda">
+<!--       <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" /> -->
+      <JSONLayout compact="true" eventEol="true" properties="true" propertiesAsList="false" locationInfo="false"/>
+    </Lambda>
+  </Appenders>
+  <Loggers>
+    <Root level="info">
+      <AppenderRef ref="Lambda" />
+    </Root>
+  </Loggers>
+</Configuration>

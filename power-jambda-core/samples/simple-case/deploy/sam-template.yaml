@@ -1,0 +1,40 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Sample API Endpoint configured using Swagger specified inline and backed by a Lambda function
+Resources:
+  SampleApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: dev
+      DefinitionBody:
+        swagger: "2.0"
+        info:
+          title: !Sub ${AWS::StackName}
+        paths:
+          /echo:
+            post:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                type: aws_proxy
+                uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${MyLambdaFunction.Arn}/invocations
+              responses: {}
+
+  MyLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: com.visionarts.powerjambda.sample.simple.SampleApplication::handleRequest
+      Runtime: java8
+      CodeUri: ../target/power-jambda-sample.jar
+      Timeout: 25
+      Events:
+        PostApi:
+          Type: Api
+          Properties:
+            Path: /echo
+            Method: POST
+            RestApiId: !Ref SampleApi
+
+Outputs:
+  ApiUrl:
+    Value: !Sub https://${SampleApi}.execute-api.${AWS::Region}.amazonaws.com/dev
+

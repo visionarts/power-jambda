@@ -16,8 +16,9 @@
 
   <licenses>
     <license>
-    <name>The Apache License, Version 2.0</name>
-    <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <name>The Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
     </license>
   </licenses>
 
@@ -100,30 +101,42 @@
     </dependencies>
   </dependencyManagement>
 
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
+
   <build>
     <pluginManagement>
       <plugins>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-jar-plugin</artifactId>
-          <version>2.6</version>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.6.0</version>
           <configuration>
-            <archive>
-              <index>true</index>
-              <manifest>
-                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-              </manifest>
-              <manifestEntries>
-                <Built-Time>${maven.build.timestamp}</Built-Time>
-                <X-Compile-Source-JDK>${maven.compiler.source}</X-Compile-Source-JDK>
-                <X-Compile-Target-JDK>${maven.compiler.target}</X-Compile-Target-JDK>
-              </manifestEntries>
-            </archive>
+            <showDeprecation>true</showDeprecation>
           </configuration>
         </plugin>
         <plugin>
-          <!-- create javadoc.jar -->
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>2.2.1</version>
+          <executions>
+            <execution>
+              <id>attach-sources</id>
+              <goals>
+                <goal>jar-no-fork</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
           <version>2.10.4</version>
@@ -135,78 +148,78 @@
               </goals>
             </execution>
           </executions>
-          <configuration>
-            <!-- force links to Java 8 documentation (should happen automatically
-              but doesn't) -->
-            <javaApiLinks>
-              <property>
-                <name>api_1.8</name>
-                <value>https://docs.oracle.com/javase/8/docs/api/</value>
-              </property>
-            </javaApiLinks>
-            <tags>
-              <tag>
-                <name>apiNote</name>
-                <placement>a</placement>
-                <head>API Note:</head>
-              </tag>
-              <tag>
-                <name>implSpec</name>
-                <placement>a</placement>
-                <head>Implementation Requirements:</head>
-              </tag>
-              <tag>
-                <name>implNote</name>
-                <placement>a</placement>
-                <head>Implementation Note:</head>
-              </tag>
-              <tag>
-                <name>param</name>
-              </tag>
-              <tag>
-                <name>return</name>
-              </tag>
-              <tag>
-                <name>throws</name>
-              </tag>
-              <tag>
-                <name>since</name>
-              </tag>
-              <tag>
-                <name>version</name>
-              </tag>
-              <tag>
-                <name>serialData</name>
-              </tag>
-              <tag>
-                <name>see</name>
-              </tag>
-            </tags>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.jacoco</groupId>
-          <artifactId>jacoco-maven-plugin</artifactId>
-          <version>0.7.8</version>
-          <executions>
-            <execution>
-              <id>prepare-agent</id>
-              <goals>
-                <goal>prepare-agent</goal>
-              </goals>
-            </execution>
-          </executions>
         </plugin>
       </plugins>
     </pluginManagement>
+
+    <plugins>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.7.8</version>
+        <executions>
+          <execution>
+            <id>prepare-agent</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>publishing</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.6</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.sonatype.plugins</groupId>
+            <artifactId>nexus-staging-maven-plugin</artifactId>
+            <version>1.6.7</version>
+            <extensions>true</extensions>
+            <configuration>
+              <serverId>ossrh</serverId>
+              <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+              <autoReleaseAfterClose>true</autoReleaseAfterClose>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>disable-java8-doclint</id>
+      <activation>
+        <jdk>[1.8,)</jdk>
+      </activation>
+      <properties>
+        <additionalparam>-Xdoclint:none</additionalparam>
+      </properties>
+    </profile>
+  </profiles>
 
   <reporting>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-report-plugin</artifactId>
-        <version>2.18.1</version>
+        <version>2.20</version>
       </plugin>
     </plugins>
   </reporting>

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.visionarts.powerjambda.events.internal;
 
 import java.io.IOException;
@@ -24,7 +25,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
- * Intrenal use only
+ * Internal use only
  *
  */
 public class EventDeserializeUtils {

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.visionarts.powerjambda.utils;
 
 import java.lang.annotation.Annotation;
@@ -46,8 +47,8 @@ public class ReflectionUtils {
     /**
      * Returns classes annotated with a given annotation.
      *
-     * @param packagePrefix
-     * @param annotation
+     * @param packagePrefix The location to find classes
+     * @param annotation The annotation to find
      * @return The set of classes with a given annotation
      */
     public static Set<Class<?>> findAllClassesWithAnnotation(
@@ -63,9 +64,9 @@ public class ReflectionUtils {
     /**
      * Returns classes annotated with a given annotation and condition.
      *
-     * @param packagePrefix
-     * @param annotation
-     * @param matchCondition
+     * @param packagePrefix The location to find classes
+     * @param annotation The annotation to find
+     * @param matchCondition The condition to match
      * @return The set of classes with a given annotation and condition
      */
     public static Set<Class<?>> findAllClassesWithAnnotation(

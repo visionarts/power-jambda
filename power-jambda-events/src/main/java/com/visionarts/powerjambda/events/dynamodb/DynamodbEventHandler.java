@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.visionarts.powerjambda.events.dynamodb;
 
 import java.io.IOException;
@@ -65,9 +66,9 @@ public class DynamodbEventHandler extends AbstractEventHandler<DynamodbEventEx, 
         public final Result result;
         public final AwsEventRequest request;
 
-        public DynamodbStreamRecordResult(Result result, AwsEventRequest rquest) {
+        DynamodbStreamRecordResult(Result result, AwsEventRequest request) {
             this.result = result;
-            this.request = rquest;
+            this.request = request;
         }
     }
 

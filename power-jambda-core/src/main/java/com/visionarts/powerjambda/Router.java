@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.visionarts.powerjambda;
 
 import java.util.function.BiFunction;
@@ -22,9 +23,9 @@ import com.amazonaws.services.lambda.runtime.Context;
 /**
  * Interface for routing a request, and returning a response.
  *
- * @param <Request> The type of request
- * @param <Response> The type of response
+ * @param <RequestT> The type of request
+ * @param <ResponseT> The type of response
  */
-public interface Router<Request, Response> extends BiFunction<Request, Context, Response> {
+public interface Router<RequestT, ResponseT> extends BiFunction<RequestT, Context, ResponseT> {
     // the top of hierarchy
 }

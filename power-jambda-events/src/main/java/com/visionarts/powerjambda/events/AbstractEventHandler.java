@@ -13,18 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.visionarts.powerjambda.events;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+package com.visionarts.powerjambda.events;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.visionarts.powerjambda.AbstractRouter;
 import com.visionarts.powerjambda.ApplicationContext;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-public abstract class AbstractEventHandler<EventType, EventResultType, RouterRequest>
-    implements RequestHandler<EventType, EventResultType>, EventRequestReader<EventType, RouterRequest> {
+public abstract class AbstractEventHandler<EventT, EventResultT, RouterRequestT>
+    implements RequestHandler<EventT, EventResultT>, EventRequestReader<EventT, RouterRequestT> {
 
     protected final Logger logger = LogManager.getLogger(this.getClass());
     protected final ApplicationContext applicationContext;
@@ -39,19 +39,19 @@ public abstract class AbstractEventHandler<EventType, EventResultType, RouterReq
      *
      */
     @Override
-    public EventResultType handleRequest(EventType event, Context context) {
+    public EventResultT handleRequest(EventT event, Context context) {
         return handleEvent(event, context);
     }
 
-    protected abstract EventResultType handleEvent(EventType event, Context context);
+    protected abstract EventResultT handleEvent(EventT event, Context context);
 
     /**
      * Convenient method forms pass through to <br>
      * {@link AbstractRouter#apply(Object, Context)}
      *
-     * @param request
-     * @param context
-     * @return
+     * @param request The incoming request
+     * @param context The Lambda Context object passed by the AWS Lambda environment
+     * @return The response returned by the action class
      */
     protected final AwsEventResponse actionRouterHandle(AwsEventRequest request, Context context) {
         return new EventActionRouter(applicationContext)

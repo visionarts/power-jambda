@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.visionarts.powerjambda;
 
 import java.io.IOException;
@@ -24,7 +25,7 @@ public abstract class ResponseWriter<I, O> {
     public O writeResponse(I value) throws IOException {
         if (value instanceof ResponseEntity) {
             @SuppressWarnings("unchecked")
-            ResponseEntity<I> val = (ResponseEntity<I>)value;
+            ResponseEntity<I> val = (ResponseEntity<I>) value;
             return writeEntity(val);
         } else {
             return writeEntity(value);
@@ -32,5 +33,6 @@ public abstract class ResponseWriter<I, O> {
     }
 
     protected abstract O writeEntity(I value) throws IOException;
+
     protected abstract O writeEntity(ResponseEntity<I> value) throws IOException;
 }

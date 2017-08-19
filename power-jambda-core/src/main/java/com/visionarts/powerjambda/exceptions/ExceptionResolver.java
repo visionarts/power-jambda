@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.visionarts.powerjambda.exceptions;
 
 import com.amazonaws.services.lambda.runtime.Context;
@@ -20,11 +21,11 @@ import com.amazonaws.services.lambda.runtime.Context;
 /**
  * A ExceptionResolver interface that resolves an exception through {@code @ExceptionHandler} methods in the action.
  *
- * @param <Response> The type of response to be transformed
+ * @param <ResponseT> The type of response to be transformed
  */
-public interface ExceptionResolver<Response> {
+public interface ExceptionResolver<ResponseT> {
 
-    <T> Response handleException(Throwable exception, T action, Context context)
+    <T> ResponseT handleException(Throwable exception, T action, Context context)
             throws InternalErrorException;
 
 }

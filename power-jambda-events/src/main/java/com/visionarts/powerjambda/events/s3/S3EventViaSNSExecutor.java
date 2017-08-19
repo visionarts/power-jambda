@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.visionarts.powerjambda.events.s3;
 
 import java.io.IOException;
 import java.util.Optional;
-
-import org.apache.logging.log4j.ThreadContext;
 
 import com.amazonaws.services.s3.event.S3EventNotification;
 import com.visionarts.powerjambda.events.EventConstants;
@@ -26,6 +25,7 @@ import com.visionarts.powerjambda.events.action.AbstractEventAction;
 import com.visionarts.powerjambda.events.internal.EventDeserializeUtils;
 import com.visionarts.powerjambda.events.model.SNSEventEx;
 import com.visionarts.powerjambda.events.sns.SNSEventExecutor;
+import org.apache.logging.log4j.ThreadContext;
 
 public class S3EventViaSNSExecutor extends S3EventExecutor {
 

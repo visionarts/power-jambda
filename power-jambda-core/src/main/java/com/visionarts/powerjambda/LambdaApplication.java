@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.visionarts.powerjambda;
 
 import java.io.IOException;
@@ -77,7 +78,7 @@ public class LambdaApplication {
      * @param context
      *            The Lambda Context object passed by the AWS Lambda environment
      *
-     * @throws Exception
+     * @throws Exception Thrown if an unknown error in processing
      */
     public static void run(Class<?> lambdaMainHandlerClazz,
                            InputStream input, OutputStream output,
@@ -99,18 +100,18 @@ public class LambdaApplication {
      * @param startUpHandler
      *            A start up handler to invoke when you call a Lambda function for the first time
      *
-     * @throws Exception
+     * @throws Exception Thrown if an unknown error in processing
      */
     public static void run(Class<?> lambdaMainHandlerClazz,
                            InputStream input, OutputStream output,
                            Context context, Consumer<ApplicationContext> startUpHandler) throws Exception {
         application = Optional.ofNullable(application).orElseGet(
-                () -> {
-                    LambdaApplication app = new LambdaApplication(lambdaMainHandlerClazz);
-                    Optional.ofNullable(startUpHandler)
-                        .ifPresent(h -> h.accept(app.applicationContext));
-                    return app;
-                });
+            () -> {
+                LambdaApplication app = new LambdaApplication(lambdaMainHandlerClazz);
+                Optional.ofNullable(startUpHandler)
+                    .ifPresent(h -> h.accept(app.applicationContext));
+                return app;
+            });
         application.handle(input, output, context);
     }
 

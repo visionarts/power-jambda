@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.visionarts.powerjambda.utils;
 
 import java.util.Objects;
@@ -71,9 +72,8 @@ public class Utils {
      *
      * @param <T> Type of the object to be check
      * @param <E> Type of the exception to be thrown
-     * @param obj     The object to check for nullity
-     * @param exceptionSupplier The supplier which will return the exception to
-     *            be thrown
+     * @param obj The object to check for nullity
+     * @param exceptionSupplier The supplier which will return the exception to be thrown
      * @return {@code obj} if not {@code null}
      * @throws E If {@code obj} is {@code null}
      */

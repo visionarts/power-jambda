@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.visionarts.powerjambda.events;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+package com.visionarts.powerjambda.events;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.visionarts.powerjambda.GlobalExceptionHandler;
 import com.visionarts.powerjambda.exceptions.ClientErrorException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Default exception handler for framework.<br>

@@ -13,15 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.visionarts.powerjambda.events;
 
 /**
  * Implementations of the RequestReader object.
  *
- * @param <EventType> The input type of the Lambda function
- * @param <Request> The type of the action request object
+ * @param <EventT> The input type of the Lambda function
+ * @param <RequestT> The type of the action request object
  */
-public interface EventRequestReader<EventType, Request> {
+public interface EventRequestReader<EventT, RequestT> {
 
     /**
      * Reads the incoming request and produces a populated request for the action.
@@ -29,5 +30,5 @@ public interface EventRequestReader<EventType, Request> {
      * @param event The incoming request object
      * @return A request object for the action
      */
-    Request readEvent(EventType event);
+    RequestT readEvent(EventT event);
 }

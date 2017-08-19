@@ -13,14 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.visionarts.powerjambda;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.visionarts.powerjambda.exceptions.ClientErrorException;
 
-public interface GlobalExceptionHandler<Response> {
+public interface GlobalExceptionHandler<ResponseT> {
 
-    Response handleException(Exception ex, Context context);
+    ResponseT handleException(Exception ex, Context context);
 
-    Response handleException(ClientErrorException ex, Context context);
+    ResponseT handleException(ClientErrorException ex, Context context);
 }

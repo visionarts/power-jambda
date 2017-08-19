@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.visionarts.powerjambda.events.action;
 
 import com.amazonaws.services.lambda.runtime.Context;
@@ -33,7 +34,8 @@ import com.visionarts.powerjambda.exceptions.InternalErrorException;
  * <br>
  * @param <T> The body parameter type in the event action request
  */
-public abstract class AbstractEventAction<T> extends LambdaBaseAction<AwsEventRequest, AwsEventResponse, EventActionRequest<T>, AwsEventResponse> {
+public abstract class AbstractEventAction<T>
+        extends LambdaBaseAction<AwsEventRequest, AwsEventResponse, EventActionRequest<T>, AwsEventResponse> {
 
     /**
      * Returns the type of the class modeled by the body type in the action request. <br>
@@ -69,14 +71,15 @@ public abstract class AbstractEventAction<T> extends LambdaBaseAction<AwsEventRe
 
     @Override
     public AwsEventResponse handleException(Throwable exception, Context context) throws InternalErrorException {
-        DefaultActionExceptionResolver<AwsEventResponse> resolver = new DefaultActionExceptionResolver<>(new DummyResponseWriter<>());
+        DefaultActionExceptionResolver<AwsEventResponse> resolver =
+                new DefaultActionExceptionResolver<>(new DummyResponseWriter<>());
         return resolver.handleException(exception, this, context);
     }
 
     @Override
     protected final void beforeHandle(EventActionRequest<T> request, Context context) throws Exception {
         logger.info("START {} with {}",
-                () -> this.getClass().getName(), () -> maskableJson(request.getBody()));
+            () -> this.getClass().getName(), () -> maskableJson(request.getBody()));
         beforeAction(request, context);
     }
 

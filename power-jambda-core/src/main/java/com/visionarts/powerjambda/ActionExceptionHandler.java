@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.visionarts.powerjambda;
 
 import com.amazonaws.services.lambda.runtime.Context;
@@ -23,7 +24,7 @@ import com.visionarts.powerjambda.exceptions.InternalErrorException;
  * through {@code @ExceptionHandler} methods in the action.
  *
  */
-public interface ActionExceptionHandler<Response> {
+public interface ActionExceptionHandler<ResponseT> {
 
     /**
      * Creates the customized error response to API Gateway.<br>
@@ -33,6 +34,6 @@ public interface ActionExceptionHandler<Response> {
      * @return The exception as error response to API Gateway
      * @throws InternalErrorException The exception that occurred
      */
-    Response handleException(Throwable exception, Context context) throws InternalErrorException;
+    ResponseT handleException(Throwable exception, Context context) throws InternalErrorException;
 
 }

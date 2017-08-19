@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.visionarts.powerjambda.events;
 
 import java.io.IOException;
@@ -23,13 +24,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.amazonaws.services.lambda.runtime.Context;
 import com.visionarts.powerjambda.ApplicationContext;
 import com.visionarts.powerjambda.events.utils.IOUtils;
 import com.visionarts.powerjambda.utils.Utils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * The class has the main event handler.
@@ -43,7 +43,10 @@ public final class LambdaEventHandler {
 
     public LambdaEventHandler(ApplicationContext appContext, EventExecutorRegistry registry) {
         executors = registry.stream()
-                .map(e -> { e.setApplicationContext(appContext); return e; })
+                .map(e -> {
+                    e.setApplicationContext(appContext);
+                    return e;
+                })
                 .collect(Collectors.toList());
     }
 

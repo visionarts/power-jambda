@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.visionarts.powerjambda.events;
 
 import java.util.Optional;
@@ -20,10 +21,10 @@ import java.util.function.Supplier;
 
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 
-public interface EventResolver<EventType, R> {
+public interface EventResolver<EventT, R> {
 
-    Optional<EventType> resolve(final byte[] input);
+    Optional<EventT> resolve(byte[] input);
 
-    Supplier<RequestHandler<EventType, R>> getEventHandler();
+    Supplier<RequestHandler<EventT, R>> getEventHandler();
 
 }

@@ -13,19 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.visionarts.powerjambda.events;
 
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.visionarts.powerjambda.ApplicationContext;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-public abstract class AbstractEventExecutor<EventType, EventResultType extends Result<?>> implements EventResolver<EventType, EventResultType> {
+public abstract class AbstractEventExecutor<EventT, EventResultT extends Result<?>>
+        implements EventResolver<EventT, EventResultT> {
 
     protected final Logger logger = LogManager.getLogger(this.getClass());
 
@@ -48,21 +49,21 @@ public abstract class AbstractEventExecutor<EventType, EventResultType extends R
         this.throwOnFailure = throwOnFailure;
     }
 
-    public AbstractEventExecutor<EventType, EventResultType> throwOnFailure(boolean throwOnFailure) {
+    public AbstractEventExecutor<EventT, EventResultT> throwOnFailure(boolean throwOnFailure) {
         setThrowOnFailure(throwOnFailure);
         return this;
     }
 
 
-    public final Optional<EventResultType> apply(final byte[] input, Context context) {
-        Optional<EventResultType> result = handleEvent(() -> resolve(input), context);
+    public final Optional<EventResultT> apply(final byte[] input, Context context) {
+        Optional<EventResultT> result = handleEvent(() -> resolve(input), context);
         result.ifPresent(r -> r.setThrowOnFailure(isThrowOnFailure()));
         return result;
     }
 
-    private Optional<EventResultType> handleEvent(Supplier<Optional<EventType>> eventSupplier, Context context) {
+    private Optional<EventResultT> handleEvent(Supplier<Optional<EventT>> eventSupplier, Context context) {
         return eventSupplier.get().map(e -> {
-            RequestHandler<EventType, EventResultType> handler = getEventHandler().get();
+            RequestHandler<EventT, EventResultT> handler = getEventHandler().get();
             return handler.handleRequest(e, context);
         });
     }

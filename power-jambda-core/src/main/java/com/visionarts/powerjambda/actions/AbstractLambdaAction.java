@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.visionarts.powerjambda.actions;
 
 import com.amazonaws.services.lambda.runtime.Context;
@@ -24,8 +25,8 @@ import com.visionarts.powerjambda.exceptions.DefaultActionExceptionResolver;
 import com.visionarts.powerjambda.exceptions.InternalErrorException;
 import com.visionarts.powerjambda.models.ActionRequest;
 
-public abstract class AbstractLambdaAction<T, ActionResult>
-        extends LambdaBaseAction<AwsProxyRequest, AwsProxyResponse, ActionRequest<T>, ActionResult> {
+public abstract class AbstractLambdaAction<T, ActionResultT>
+        extends LambdaBaseAction<AwsProxyRequest, AwsProxyResponse, ActionRequest<T>, ActionResultT> {
 
     /**
      * Returns the type of the class modeled by the body type in the action request. <br>
@@ -42,14 +43,14 @@ public abstract class AbstractLambdaAction<T, ActionResult>
     }
 
     @Override
-    protected ResponseWriter<ActionResult, AwsProxyResponse> responseWriter(AwsProxyRequest request, Context context) {
+    protected ResponseWriter<ActionResultT, AwsProxyResponse> responseWriter(AwsProxyRequest request, Context context) {
         return new JsonResponseWriter<>();
     }
 
     @Override
     protected final void beforeHandle(ActionRequest<T> actionRequest, Context context) throws Exception {
         logger.info("START {} with {}",
-                () -> this.getClass().getName(), () -> maskableJson(actionRequest.getBody()));
+            () -> this.getClass().getName(), () -> maskableJson(actionRequest.getBody()));
         beforeAction(actionRequest, context);
     }
 
@@ -65,7 +66,8 @@ public abstract class AbstractLambdaAction<T, ActionResult>
     @Override
     public AwsProxyResponse handleException(Throwable exception, Context context)
             throws InternalErrorException {
-        DefaultActionExceptionResolver<AwsProxyResponse> resolver = new DefaultActionExceptionResolver<>(new JsonResponseWriter<>());
+        DefaultActionExceptionResolver<AwsProxyResponse> resolver =
+                new DefaultActionExceptionResolver<>(new JsonResponseWriter<>());
         return resolver.handleException(exception, this, context);
     }
 

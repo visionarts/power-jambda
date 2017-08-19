@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.visionarts.powerjambda.actions;
 
 import com.amazonaws.services.lambda.runtime.Context;
@@ -28,10 +29,10 @@ import com.visionarts.powerjambda.models.ResponseEntity;
  * All action classes with the credentials must inherit this abstract class.<br>
  * <br>
  * @param <T> The type of request body
- * @param <ActionResult> The type of action result to return the response
- * @param <Credentials> The type of client credentials
+ * @param <ActionResultT> The type of action result to return the response
+ * @param <CredentialsT> The type of client credentials
  */
-public abstract class AbstractSecureAction<T, ActionResult, Credentials> extends AbstractLambdaAction<T, ActionResult> {
+public abstract class AbstractSecureAction<T, ActionResultT, CredentialsT> extends AbstractLambdaAction<T, ActionResultT> {
 
     /**
      * Authenticates and returns a credential when the authentication is successful.<br>
@@ -43,7 +44,7 @@ public abstract class AbstractSecureAction<T, ActionResult, Credentials> extends
      * @throws UnauthorizedException Thrown if an authentication request is rejected
      * @throws Exception Thrown if unknown error occurs
      */
-    protected abstract Credentials authenticate(ActionRequest<T> request, Context context)
+    protected abstract CredentialsT authenticate(ActionRequest<T> request, Context context)
             throws UnauthorizedException, Exception;
 
     @ExceptionHandler(UnauthorizedException.class)

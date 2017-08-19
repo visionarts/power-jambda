@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.visionarts.powerjambda;
 
 import com.amazonaws.services.lambda.runtime.Context;
-
 
 /**
  * The Lambda action implements AWS Lambda Function application logic using plain old java objects(POJOs)
  * as input and output. <br>
  * <br>
- * @param <Request> The type of the request to the action
- * @param <Result> The type of the result from the action
+ * @param <RequestT> The type of the request to the action
+ * @param <ResultT> The type of the result from the action
  */
-public interface LambdaAction<Request, Result> {
+public interface LambdaAction<RequestT, ResultT> {
 
     /**
      * Handles the action request.
@@ -33,9 +33,9 @@ public interface LambdaAction<Request, Result> {
      * @param request The action request
      * @param context The Lambda execution environment context object
      * @return The action result as the Lambda Function response
-     * @throws Exception
+     * @throws Exception Thrown if an error in processing
      */
-     Result handle(Request request, Context context) throws Exception;
+    ResultT handle(RequestT request, Context context) throws Exception;
 
     /**
      * Here you do the job before action if any.
@@ -46,9 +46,9 @@ public interface LambdaAction<Request, Result> {
      *
      * @param request The action request
      * @param context The Lambda context passed by the AWS Lambda environment
-     * @throws Exception
+     * @throws Exception Thrown if an error in processing
      */
-    default void beforeAction(Request request, Context context) throws Exception {
+    default void beforeAction(RequestT request, Context context) throws Exception {
         // do something as you like
     }
 
@@ -60,7 +60,7 @@ public interface LambdaAction<Request, Result> {
      * @param request The action request
      * @param context The Lambda context passed by the AWS Lambda environment
      */
-    default void afterAction(Request request, Context context) {
+    default void afterAction(RequestT request, Context context) {
         // do something as you like
     }
 

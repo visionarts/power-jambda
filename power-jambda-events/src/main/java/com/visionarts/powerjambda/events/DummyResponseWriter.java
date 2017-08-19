@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.visionarts.powerjambda.events;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -23,7 +24,6 @@ import com.visionarts.powerjambda.models.ResponseEntity;
  * This response writer class ignores a response from action,
  * and always returns {@link AwsEventResponse#AWS_EVENT_SUCCESSFUL_RESPONSE}
  *
- * @param <T>
  */
 public class DummyResponseWriter<T> extends ResponseWriter<T, AwsEventResponse> {
 

@@ -13,35 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.visionarts.powerjambda;
 
 import java.util.Optional;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.visionarts.powerjambda.actions.LambdaBaseAction;
 import com.visionarts.powerjambda.exceptions.ClientErrorException;
 import com.visionarts.powerjambda.exceptions.InternalErrorException;
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * The abstract class selects a property action to match with a request,<br>
  * and returns a response.
  *
- * @param <Request> The type of request to Lambda function
- * @param <Response> The type of response from Lambda function
+ * @param <RequestT> The type of request to Lambda function
+ * @param <ResponseT> The type of response from Lambda function
  */
-public abstract class AbstractRouter<Request, Response> implements Router<Request, Response> {
+public abstract class AbstractRouter<RequestT, ResponseT> implements Router<RequestT, ResponseT> {
 
     protected final Logger logger = LogManager.getLogger(this.getClass().getName());
 
     private final ApplicationContext applicationContext;
-    private final GlobalExceptionHandler<Response> exceptionHandler;
+    private final GlobalExceptionHandler<ResponseT> exceptionHandler;
 
     public AbstractRouter(ApplicationContext applicationContext,
-                          GlobalExceptionHandler<Response> exceptionHandler) {
+                          GlobalExceptionHandler<ResponseT> exceptionHandler) {
         this.applicationContext = applicationContext;
         this.exceptionHandler = exceptionHandler;
     }
@@ -56,8 +55,8 @@ public abstract class AbstractRouter<Request, Response> implements Router<Reques
      * @return The response returned by the action class
      */
     @Override
-    public Response apply(Request request, Context context) {
-        Response response;
+    public ResponseT apply(RequestT request, Context context) {
+        ResponseT response;
         try {
             response = handle(request, context);
         } catch (ClientErrorException e) {
@@ -68,11 +67,11 @@ public abstract class AbstractRouter<Request, Response> implements Router<Reques
         return response;
     }
 
-    private final Response handle(Request request, Context context)
+    private ResponseT handle(RequestT request, Context context)
             throws ClientErrorException, InternalErrorException {
 
         logger.traceEntry();
-        LambdaBaseAction<Request, Response, ?, ?> action;
+        LambdaBaseAction<RequestT, ResponseT, ?, ?> action;
         try {
             action = instantiateAction(request);
         } catch (ReflectiveOperationException e) {
@@ -101,18 +100,18 @@ public abstract class AbstractRouter<Request, Response> implements Router<Reques
     /**
      * Instantiates the action object to match with a request.
      *
-     * @param request
+     * @param request The incoming request
      * @return The action object
-     * @throws ReflectiveOperationException
-     * @throws ClientErrorException
+     * @throws ReflectiveOperationException Thrown if fail to instantiate an action
+     * @throws ClientErrorException Thrown if a request is invalid
      */
-    private LambdaBaseAction<Request, Response, ?, ?> instantiateAction(Request request)
+    private LambdaBaseAction<RequestT, ResponseT, ?, ?> instantiateAction(RequestT request)
             throws ReflectiveOperationException, ClientErrorException {
         Class<?> actionClazz = findAction(
                 applicationContext.getApplicationMainClass().getPackage().getName(), request)
                 .orElseThrow(() -> new ClientErrorException(404, "Action not found"));
         @SuppressWarnings("unchecked")
-        LambdaBaseAction<Request, Response, ?, ?> act = LambdaBaseAction.class.cast(actionClazz.newInstance());
+        LambdaBaseAction<RequestT, ResponseT, ?, ?> act = LambdaBaseAction.class.cast(actionClazz.newInstance());
         return act;
     }
 
@@ -120,9 +119,9 @@ public abstract class AbstractRouter<Request, Response> implements Router<Reques
      * Returns the action class object within a package path.
      *
      * @param packagePath The package path where {@link AbstractRouter} scans actions
-     * @param request
+     * @param request The incoming request
      * @return An {@link java.util.Optional} object wrapped an action class object
      */
-    protected abstract Optional<Class<?>> findAction(String packagePath, Request request);
+    protected abstract Optional<Class<?>> findAction(String packagePath, RequestT request);
 
 }

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.visionarts.powerjambda.exceptions;
 
 import java.io.IOException;
@@ -34,9 +35,9 @@ import com.visionarts.powerjambda.utils.Utils;
  * through {@code @ExceptionHandler} methods in the action.
  *
  */
-public class DefaultActionExceptionResolver<Response> implements ExceptionResolver<Response> {
+public class DefaultActionExceptionResolver<ResponseT> implements ExceptionResolver<ResponseT> {
 
-    private ResponseWriter<ResponseEntity<?>, Response> responseWriter;
+    private ResponseWriter<ResponseEntity<?>, ResponseT> responseWriter;
     private Class<? extends Throwable> exceptionClazz;
     private Class<?> actionClazz;
 
@@ -45,7 +46,7 @@ public class DefaultActionExceptionResolver<Response> implements ExceptionResolv
      * <br>
      *
      */
-    public DefaultActionExceptionResolver(ResponseWriter<ResponseEntity<?>, Response> responseWriter) {
+    public DefaultActionExceptionResolver(ResponseWriter<ResponseEntity<?>, ResponseT> responseWriter) {
         this.responseWriter = responseWriter;
     }
 
@@ -59,7 +60,7 @@ public class DefaultActionExceptionResolver<Response> implements ExceptionResolv
      * @throws InternalErrorException The exception that occurred
      */
     @Override
-    public <T> Response handleException(Throwable exception, T action, Context context) throws InternalErrorException {
+    public <T> ResponseT handleException(Throwable exception, T action, Context context) throws InternalErrorException {
         this.exceptionClazz = exception.getClass();
         this.actionClazz = (Class<?>) action.getClass();
         try {
@@ -80,8 +81,8 @@ public class DefaultActionExceptionResolver<Response> implements ExceptionResolv
         Object retVal = invokeMethod(method, action, targetException, context);
 
         Utils.requireNonNull(retVal,
-                () -> new InternalErrorException("Exception handler returns null"));
-        return (ResponseEntity<?>)retVal;
+            () -> new InternalErrorException("Exception handler returns null"));
+        return (ResponseEntity<?>) retVal;
     }
 
     private Method findExcepionHandler(Throwable exception) throws InternalErrorException {
@@ -90,8 +91,8 @@ public class DefaultActionExceptionResolver<Response> implements ExceptionResolv
         handler = OptionalUtils.or(handler, () -> findExceptionHandler(actionClazz, Exception.class));
         handler = OptionalUtils.or(handler, () -> findExceptionHandler(actionClazz, Throwable.class));
         Method method = handler.orElseThrow(
-                () -> new InternalErrorException(
-                        "Not found any ExceptionHandler for " + exceptionClazz.getName(), exception));
+            () -> new InternalErrorException(
+                    "Not found any ExceptionHandler for " + exceptionClazz.getName(), exception));
         return method;
     }
 

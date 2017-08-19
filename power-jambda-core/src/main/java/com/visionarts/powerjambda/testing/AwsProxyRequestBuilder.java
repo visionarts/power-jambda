@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.visionarts.powerjambda.testing;
 
 import java.io.ByteArrayInputStream;
@@ -63,7 +64,7 @@ public class AwsProxyRequestBuilder {
         this.request.setHttpMethod(httpMethod);
         this.request.getRequestContext().setHttpMethod(httpMethod);
         if (HttpMethod.GET == HttpMethod.valueOf(httpMethod)) {
-            body((String)null);
+            body((String) null);
         }
         return this;
     }

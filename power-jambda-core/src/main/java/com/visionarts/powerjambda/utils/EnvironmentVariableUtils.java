@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.visionarts.powerjambda.utils;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-
-
 
 /**
  * Helper class for getting environment variables on AWS Lambda runtime.<br>
@@ -40,7 +40,7 @@ public class EnvironmentVariableUtils {
      * @param <S> The third input argument
      */
     @FunctionalInterface
-    public static interface TriConsumer<T, R, S> {
+    public interface TriConsumer<T, R, S> {
         /**
          * Performs the operation given the specified arguments.<br>
          * <br>
@@ -52,13 +52,16 @@ public class EnvironmentVariableUtils {
         void accept(T t, R r, S s);
     }
 
-    private static final Map<Class<?>, TriConsumer<Field, Object, String>> FieldSetConsumerMap = new HashMap<>(8);
+    private static final Map<Class<?>, TriConsumer<Field, Object, String>> FIELD_SET_CONSUMER_MAP;
+
     static {
-        FieldSetConsumerMap.put(Boolean.class, (f, o, v) -> ReflectionUtils.fieldSetAsBoolean(f, o, v));
-        FieldSetConsumerMap.put(boolean.class, (f, o, v) -> ReflectionUtils.fieldSetAsBoolean(f, o, v));
-        FieldSetConsumerMap.put(String.class, (f, o, v) -> ReflectionUtils.fieldSetAsString(f, o, v));
-        FieldSetConsumerMap.put(Integer.class, (f, o, v) -> ReflectionUtils.fieldSetAsInteger(f, o, v));
-        FieldSetConsumerMap.put(int.class, (f, o, v) -> ReflectionUtils.fieldSetAsInteger(f, o, v));
+        Map<Class<?>, TriConsumer<Field, Object, String>> map = new HashMap<>(8);
+        map.put(Boolean.class, (f, o, v) -> ReflectionUtils.fieldSetAsBoolean(f, o, v));
+        map.put(boolean.class, (f, o, v) -> ReflectionUtils.fieldSetAsBoolean(f, o, v));
+        map.put(String.class, (f, o, v) -> ReflectionUtils.fieldSetAsString(f, o, v));
+        map.put(Integer.class, (f, o, v) -> ReflectionUtils.fieldSetAsInteger(f, o, v));
+        map.put(int.class, (f, o, v) -> ReflectionUtils.fieldSetAsInteger(f, o, v));
+        FIELD_SET_CONSUMER_MAP = Collections.unmodifiableMap(map);
     }
 
     // Suppresses default constructor, ensuring non-instantiability.
@@ -81,8 +84,8 @@ public class EnvironmentVariableUtils {
     public static <C> C newConfigurationInstance(Class<C> configurationClazz) {
         Objects.requireNonNull(configurationClazz);
         Utils.require(configurationClazz,
-                FunctionalUtils.not(Class<C>::isInterface),
-                () -> new IllegalArgumentException("Specified class is an interface : " + configurationClazz.toString()));
+            FunctionalUtils.not(Class<C>::isInterface),
+            () -> new IllegalArgumentException("Specified class is an interface : " + configurationClazz.toString()));
 
         try {
             C configuration = configurationClazz.getConstructor().newInstance();
@@ -100,11 +103,11 @@ public class EnvironmentVariableUtils {
             return;
         }
 
-        Optional.ofNullable(FieldSetConsumerMap.get(field.getType()))
+        Optional.ofNullable(FIELD_SET_CONSUMER_MAP.get(field.getType()))
             .orElseThrow(() ->
                 new UnsupportedOperationException(
                         "Not supported type : " + field.getType().getSimpleName() +
-                        ", avaialbe in [Boolean/boolean/String/Integer/int]"))
+                        ", available in [Boolean/boolean/String/Integer/int]"))
             .accept(field, targetObject, value);
     }
 }

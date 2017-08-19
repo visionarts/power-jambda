@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.visionarts.powerjambda;
 
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.amazonaws.services.lambda.runtime.Context;
 import com.visionarts.powerjambda.annotations.Route;
 import com.visionarts.powerjambda.exceptions.DefaultGlobalExceptionHandler;
 import com.visionarts.powerjambda.http.HttpMethod;
 import com.visionarts.powerjambda.utils.ReflectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 
 /**
@@ -55,12 +55,12 @@ public class ActionRouter extends AbstractRouter<AwsProxyRequest, AwsProxyRespon
     @Override
     protected Optional<Class<?>> findAction(String packagePath, AwsProxyRequest request) {
         logger.debug("resourcePath={}, method={}", () -> request.getRequestContext().getResourcePath(),
-                () -> request.getHttpMethod());
+            () -> request.getHttpMethod());
         Set<Class<?>> actionClasses =
                 ReflectionUtils.findAllClassesWithAnnotation(packagePath,
-                        Route.class,
-                        c -> StringUtils.equals(c.getAnnotation(Route.class).resourcePath(),
-                                request.getRequestContext().getResourcePath()) &&
+                    Route.class,
+                    c -> StringUtils.equals(c.getAnnotation(Route.class).resourcePath(),
+                             request.getRequestContext().getResourcePath()) &&
                              Arrays.asList(c.getAnnotation(Route.class).methods())
                                  .contains(HttpMethod.valueOf(request.getHttpMethod())));
         return actionClasses.stream()

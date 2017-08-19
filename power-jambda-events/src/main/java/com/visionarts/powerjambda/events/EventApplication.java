@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.visionarts.powerjambda.events;
 
 import java.io.InputStream;
@@ -76,7 +77,7 @@ public class EventApplication {
      * @param context
      *            The Lambda Context object passed by the AWS Lambda environment
      *
-     * @throws Exception
+     * @throws Exception Thrown if an error in processing
      */
     public static void run(Class<?> lambdaMainHandlerClazz, EventExecutorRegistry registry,
                            InputStream input, OutputStream output,
@@ -101,18 +102,18 @@ public class EventApplication {
      * @param startupHandler
      *            A start up handler to invoke when you call a Lambda function for the first time
      *
-     * @throws Exception
+     * @throws Exception Thrown if an error in processing
      */
     public static void run(Class<?> lambdaMainHandlerClazz, EventExecutorRegistry registry,
                            InputStream input, OutputStream output,
                            Context context, Consumer<ApplicationContext> startupHandler) throws Exception {
         application = Optional.ofNullable(application).orElseGet(
-                () -> {
-                    EventApplication app = new EventApplication(lambdaMainHandlerClazz, registry);
-                    Optional.ofNullable(startupHandler)
-                        .ifPresent(h -> h.accept(app.applicationContext));
-                    return app;
-                });
+            () -> {
+                EventApplication app = new EventApplication(lambdaMainHandlerClazz, registry);
+                Optional.ofNullable(startupHandler)
+                    .ifPresent(h -> h.accept(app.applicationContext));
+                return app;
+            });
         application.handle(input, output, context);
     }
 

@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.visionarts.powerjambda.testing;
 
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 
 /**
- * Testing Logger class.
+ * The mock logger class for testing.
  *
  */
 public class MockLambdaLogger implements LambdaLogger {
@@ -30,6 +31,6 @@ public class MockLambdaLogger implements LambdaLogger {
     }
 
     public void log(String string) {
-        System.out.println(string);
+        System.out.println(string); // SUPPRESS CHECKSTYLE Regexp
     }
 }

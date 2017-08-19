@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.visionarts.powerjambda;
 
 import java.io.IOException;
@@ -30,7 +31,7 @@ public abstract class RequestReader<I, O> {
      *
      * @param request The incoming request object
      * @return A request object for the action
-     * @throws IOException Thrwon if occurs an error during producing a request
+     * @throws IOException Thrown if occurs an error during producing a request
      */
     public abstract O readRequest(I request) throws IOException;
 }

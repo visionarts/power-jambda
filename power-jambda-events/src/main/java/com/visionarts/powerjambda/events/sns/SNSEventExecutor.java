@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.visionarts.powerjambda.events.sns;
 
 import java.io.IOException;
@@ -20,14 +21,13 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import org.apache.logging.log4j.ThreadContext;
-
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.visionarts.powerjambda.events.AbstractEventExecutor;
 import com.visionarts.powerjambda.events.EventConstants;
 import com.visionarts.powerjambda.events.internal.EventDeserializeUtils;
 import com.visionarts.powerjambda.events.model.SNSEventEx;
 import com.visionarts.powerjambda.utils.FunctionalUtils;
+import org.apache.logging.log4j.ThreadContext;
 
 public class SNSEventExecutor extends AbstractEventExecutor<SNSEventEx, SNSEventResult> {
 

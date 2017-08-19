@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.visionarts.powerjambda.models;
 
 import java.io.UnsupportedEncodingException;
@@ -45,8 +46,8 @@ public class ActionRequest<T> {
     public ActionRequest(AwsProxyRequest request) {
         this.request = request;
         Optional.ofNullable(request).ifPresent(req -> {
-            pathParameters = toURLDecodededMap(req.getPathParameters());
-            queryParameters = toURLDecodededMap(req.getQueryStringParameters());
+            pathParameters = toUrlDecodededMap(req.getPathParameters());
+            queryParameters = toUrlDecodededMap(req.getQueryStringParameters());
         });
     }
 
@@ -117,7 +118,7 @@ public class ActionRequest<T> {
         return request.getBody();
     }
 
-    private Map<String, String> toURLDecodededMap(Map<String, String> src) {
+    private Map<String, String> toUrlDecodededMap(Map<String, String> src) {
         return Optional.ofNullable(src)
                 .map(m -> {
                     return m.entrySet().stream()

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.visionarts.powerjambda.events.s3;
 
 import java.io.IOException;
@@ -21,8 +22,6 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import org.apache.logging.log4j.ThreadContext;
-
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.s3.event.S3EventNotification;
 import com.visionarts.powerjambda.events.AbstractEventExecutor;
@@ -30,12 +29,13 @@ import com.visionarts.powerjambda.events.EventConstants;
 import com.visionarts.powerjambda.events.action.AbstractEventAction;
 import com.visionarts.powerjambda.events.internal.EventDeserializeUtils;
 import com.visionarts.powerjambda.utils.FunctionalUtils;
+import org.apache.logging.log4j.ThreadContext;
 
 public class S3EventExecutor extends AbstractEventExecutor<S3EventNotification, S3EventResult> {
 
     public static final Predicate<S3EventNotification> S3_EVENT_CONDITION = e ->
-    FunctionalUtils.isNotEmpty(e.getRecords()) &&
-        EventConstants.EVENT_SOURCE_S3.equals(e.getRecords().get(0).getEventSource());
+            FunctionalUtils.isNotEmpty(e.getRecords()) &&
+                    EventConstants.EVENT_SOURCE_S3.equals(e.getRecords().get(0).getEventSource());
 
     private final Class<?> s3Action;
 

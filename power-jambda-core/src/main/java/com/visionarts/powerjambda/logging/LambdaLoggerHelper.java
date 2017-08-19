@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.visionarts.powerjambda.logging;
 
 import java.util.Arrays;
@@ -20,15 +21,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.amazonaws.services.lambda.runtime.Context;
+import com.visionarts.powerjambda.AwsProxyRequest;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.ThreadContext;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
-
-import com.amazonaws.services.lambda.runtime.Context;
-import com.visionarts.powerjambda.AwsProxyRequest;
 
 /**
  * Helper class that operates for the logger on lambda framework.
@@ -72,7 +72,7 @@ public class LambdaLoggerHelper {
         Optional.ofNullable(request.getHeaders())
             .ifPresent(hdrs -> {
                 availableLoggingHeaders.forEach(
-                        lhdr -> putIfNotNullValue(lhdr, hdrs.get(lhdr)));
+                    lhdr -> putIfNotNullValue(lhdr, hdrs.get(lhdr)));
             });
     }
 

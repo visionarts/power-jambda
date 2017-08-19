@@ -13,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.visionarts.powerjambda.exceptions;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -31,18 +30,22 @@ import com.visionarts.powerjambda.AwsProxyResponse;
 import com.visionarts.powerjambda.GlobalExceptionHandler;
 import com.visionarts.powerjambda.models.DefaultErrorResponseBody;
 import com.visionarts.powerjambda.utils.Utils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Default exception handler for framework.<br>
  * <br>
  */
-public class DefaultGlobalExceptionHandler implements GlobalExceptionHandler<AwsProxyResponse>{
+public class DefaultGlobalExceptionHandler implements GlobalExceptionHandler<AwsProxyResponse> {
 
     private static final Logger logger = LogManager.getLogger(DefaultGlobalExceptionHandler.class);
-    private static final ObjectMapper om = Utils.getObjectMapper();
-    private static final Map<String, String> headers = new HashMap<>();
+    private static final Map<String, String> DEFAULT_HEADERS;
+
     static {
+        Map<String, String> headers = new HashMap<>();
         headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
+        DEFAULT_HEADERS = Collections.unmodifiableMap(headers);
     }
 
     public AwsProxyResponse handleException(Exception ex, Context context) {
@@ -50,7 +53,7 @@ public class DefaultGlobalExceptionHandler implements GlobalExceptionHandler<Aws
 
         DefaultErrorResponseBody body =
                 new DefaultErrorResponseBody("Internal Server Error", ex.getMessage());
-        return new AwsProxyResponse(500, headers, writeValueAsString(body));
+        return new AwsProxyResponse(500, DEFAULT_HEADERS, writeValueAsString(body));
     }
 
     public AwsProxyResponse handleException(ClientErrorException ex, Context context) {
@@ -58,11 +61,12 @@ public class DefaultGlobalExceptionHandler implements GlobalExceptionHandler<Aws
 
         DefaultErrorResponseBody body =
                 new DefaultErrorResponseBody("Client Error", ex.getMessage());
-        return new AwsProxyResponse(ex.getStatusCode(), headers, writeValueAsString(body));
+        return new AwsProxyResponse(ex.getStatusCode(), DEFAULT_HEADERS, writeValueAsString(body));
     }
 
     private String writeValueAsString(Object value) {
         try {
+            ObjectMapper om = Utils.getObjectMapper();
             return om.writeValueAsString(value);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);

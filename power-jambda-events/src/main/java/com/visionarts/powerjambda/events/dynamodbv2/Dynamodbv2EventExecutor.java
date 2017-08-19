@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.visionarts.powerjambda.events.dynamodbv2;
 
 import java.util.function.Function;
@@ -23,8 +24,8 @@ import com.visionarts.powerjambda.events.EventConstants;
 import com.visionarts.powerjambda.events.dynamodb.DynamodbEventExecutor;
 import com.visionarts.powerjambda.events.dynamodb.DynamodbEventResult;
 import com.visionarts.powerjambda.events.model.DynamodbEventEx;
-import com.visionarts.powerjambda.events.model.EventActionRequest;
 import com.visionarts.powerjambda.events.model.DynamodbEventEx.DynamodbStreamRecord;
+import com.visionarts.powerjambda.events.model.EventActionRequest;
 
 /**
  * The class has the event executor for DynamoDB Streams event, <br>

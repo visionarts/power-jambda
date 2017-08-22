@@ -1,4 +1,11 @@
 # Power-Jambda
+
+[![GitHub license](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://raw.githubusercontent.com/visionarts/power-jambda/master/LICENSE)
+[![Build Status](https://travis-ci.org/visionarts/power-jambda.svg?branch=master)](https://travis-ci.org/visionarts/power-jambda)
+[![Coverage Status](https://codecov.io/gh/visionarts/power-jambda/branch/master/graph/badge.svg)](https://codecov.io/gh/visionarts/power-jambda)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.visionarts/power-jambda-pom/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.visionarts/power-jambda-pom)
+[![Javadocs](http://javadoc.io/badge/com.visionarts/power-jambda-core.svg)](http://javadoc.io/doc/com.visionarts/power-jambda-core)
+
 The java serverless microframework for RESTful API allows you to quickly develop applications that use Amazon API Gateway and AWS Lambda.
 
 ## Getting Started

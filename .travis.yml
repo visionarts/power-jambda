@@ -8,6 +8,31 @@ cache:
   - "$HOME/.cache"
   - "$HOME/.m2"
 
+env:
+  global:
+    - secure: "NGXfsiCmLokJTPu6pYzHXG0zbAI/MPQ7Cid+a6O/JTq4Wxdh4WK0pv9fAmagXNPri0Cv0ZcMhbIJF+o4rxro1sx0liAzN2Q3hgcI93dPPtNSp6Id3mDRtZAaBJ2Ki5/lD0LtLkFA+Dd6D5zQqwOaMBx3HSSoVxXKkmVHadj2PK+5eYe47f773IJUWIwDvZGa/OH1hqwfz2ZeoqrlmATUKzjrWo4XlJotbAmJ/IiISj0Nvtn1k1/a/sPg5s9LrxWmW0NRuyT3TyTQ5Q/nOEwBVM9PhT7W2xFrNnmDExOq7ldsRoEjjaQvOpSEfRT9+AW9h43lP5iYgWgSU9EAhMy38Ne71+qnMrb43vfm6pwjY2R6OfoLU6c43+OTYyzXJsYSyZHJtmSrcmkxrtxs9jgsOQVryaSlqti+2bW/3Ov5wC+xOFbnyOD/s6g4hFLdNdCZ9/6Vb5Xq1hj3jNY1eML1nsQFwBbw15gFEkJzRGcPO6MkJvlcqMBqy46ohl+nCJRYk4PJmziYm3kFpr8qSeMf4wgxYNkuVEdPWWd60MiRMRHlhr9K60LoQTdkbY09AWxsNcgpd1O+3v9MyapUVG6NUvYI7nWOhT1tcPDLzhC+YRQjVMDOSSDHHvaTpPNcEEO2fryG26FcUrJ8MKdM3RJaK7rJQkNJPOZoVIu7B1W+LeM="
+    - secure: "XG4YhYSL2k50tSbgpJGqHgR015A/s6ICpisGjFHAJVjb7R9/MmBfL+1d7G5YR6lMufRLQYxQeOPOnqpY7Aa51ZISel9Dvd3zuG2xTv+TSS9LpeA6wB03giKTcGN3lQp3z38axjaxORnprTUhouf9ufeale6FMzqoWFLYw0VSsIbc4w4WcdSFl6jKlaIUv59viQ590cq1QzvkfY9WIpxsF966EHTNMdMJFyyLdCQFeU/NSmYiSmaVP0k2eJ2gaiStFObAbneW+4bMUd6K7kh+SxxZ/9GRBB1bg9c/YU9txfbkG19yJBGpUvYgmREXS4f7V6cdfV2HTHuz3BmeM8InwyMlEWPlgMYjqmei4FuvLaJmyvyc8lOZpt4VYGXeAa9DZKyWqLaTEqV9qZMLgGf43FFkG3GeR+N6KE+7LRkN1AvMzJZEfb8iAv+N9P183XwJE3P9jr/FtgqgOmEnoYodqL/rCQWt0XTIl20V1aI3yqm6lJju9Qskg5Rwi8OPvPAT6hsyHai8Hzewmcm7Ef4HhZKuoCEv0ENNwlR3tDA+QhiyxPwfz5CipDvg8fXx/gF9h1s5IA1Caf+OLyLMEd5gNj4gTPhWloLbSP8xZDZlDLytQ57oxg6bsti43SHRbjq30SmXCIzGZL7zImSLIOu7Tn6Qnu7eTk713sDiFjVh/08="
+    - secure: "qYab6IOSpxMSXXkvMtq/dGy+8UAmZ7phWzQTg5hm8EOM70JubTluIO40QeoSocBNZML0Bb7H8oytzp531HQ3W6NPfWNNw2QsFfjSSCO9REsJ3lzgNh2KIn4EaoFOPmcV/g8ErTTdSW8O+DGUhiMtrXfWH8OtmZsyNiD9lpSkRlQLOVg33NZR2ngoiQJnawzLAYkCGRQeCYpK4OBCnGskmox/NkMgdsAVkB5Tc3Vl1M+1dZZVrujES9cPPPuNY0Em2Db+OhNS2Uf9V/LWgjZA8WGPBHoJfsv90SvMroxpgGLZW9ZCfryD+3QG5mAcbneoleRXgR3U4mA9VIbPE7sd2dLPnxUc4XVTzQOGGY1Gm9SwiJ84IV7wGFjDnAPPnu2s5jMA0U7bgYTfMFxAYcShRsk+N71OswNsWj5j99uEEB92Zb6eWu+6kUL1W4k0ghzCCKnOCtFnXSkZCS1X8Gs4yFUHrmsvf1/+87zP2v/+vwAsJhpHzF2wWKNVhbNBDL7dHPhxQx68VlW27VkQdBuAIfc/wFSmtSjtKIFb+WZ0zmrBxCj6aZnANcr9rFCNu6ZWHVotQJ0TkV66gbSB8kPwZx6GlCTofaDUWEEWRd8v6LY/0Yasu4zMes/qnMqZkik9AhiZhLcpPT2NlPSQ84H1g6NNtkWTjm/4x2mmLORck1s="
+
 after_success:
   - bash <(curl -s https://codecov.io/bash)
+
+before_deploy:
+  - openssl aes-256-cbc -K $encrypted_e766f065cea8_key -iv $encrypted_e766f065cea8_iv -in ./cd/gpg.key.enc -d | gpg2 --import
+
+deploy:
+  # deploy snapshot version to maven central
+  - provider: script
+    script: cd/deploy.sh snapshot
+    skip_cleanup: true
+    on:
+      repo: visionarts/power-jambda
+      branch: master
+  # deploy release version to maven central
+  - provider: script
+    script: cd/deploy.sh release $TRAVIS_TAG
+    skip_cleanup: true
+    on:
+      repo: visionarts/power-jambda
+      tags: true
 

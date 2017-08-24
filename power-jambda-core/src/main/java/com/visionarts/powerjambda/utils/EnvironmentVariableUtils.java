@@ -84,7 +84,7 @@ public class EnvironmentVariableUtils {
     public static <C> C newConfigurationInstance(Class<C> configurationClazz) {
         Objects.requireNonNull(configurationClazz);
         Utils.require(configurationClazz,
-            FunctionalUtils.not(Class<C>::isInterface),
+            FunctionalUtils.not(Class::isInterface),
             () -> new IllegalArgumentException("Specified class is an interface : " + configurationClazz.toString()));
 
         try {

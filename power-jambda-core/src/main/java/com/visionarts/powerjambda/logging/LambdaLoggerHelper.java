@@ -36,9 +36,8 @@ import org.apache.logging.log4j.core.config.LoggerConfig;
  */
 public class LambdaLoggerHelper {
 
-    public static final String LOG_LEVEL_ENV_NAME = "LOG_LEVEL";
-    public static final Level DEFAULT_LOG_LEVEL = Level.INFO;
-
+    private static final String LOG_LEVEL_ENV_NAME = "LOG_LEVEL";
+    private static final Level DEFAULT_LOG_LEVEL = Level.INFO;
     private static final List<String> DEFAULT_LOGGING_HEADERS = Arrays.asList(
             "X-Amz-Cf-Id",
             "X-Amzn-Trace-Id");
@@ -70,10 +69,8 @@ public class LambdaLoggerHelper {
             .map(i -> i.getSourceIp())
             .ifPresent(ip -> ThreadContext.put("sourceIp", ip));
         Optional.ofNullable(request.getHeaders())
-            .ifPresent(hdrs -> {
-                availableLoggingHeaders.forEach(
-                    lhdr -> putIfNotNullValue(lhdr, hdrs.get(lhdr)));
-            });
+            .ifPresent(hdrs -> availableLoggingHeaders.forEach(
+                lhdr -> putIfNotNullValue(lhdr, hdrs.get(lhdr))));
     }
 
     private static void putIfNotNullValue(String key, String value) {
@@ -92,9 +89,6 @@ public class LambdaLoggerHelper {
     }
 
     private static Level getLogLevel(Level defaultLevel) {
-        Level level = Optional.ofNullable(System.getenv(LOG_LEVEL_ENV_NAME))
-                .map(v -> Level.toLevel(v, defaultLevel))
-                .orElse(defaultLevel);
-        return level;
+        return Level.toLevel(System.getenv(LOG_LEVEL_ENV_NAME), defaultLevel);
     }
 }

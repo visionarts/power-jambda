@@ -43,11 +43,8 @@ public final class LambdaEventHandler {
 
     public LambdaEventHandler(ApplicationContext appContext, EventExecutorRegistry registry) {
         executors = registry.stream()
-                .map(e -> {
-                    e.setApplicationContext(appContext);
-                    return e;
-                })
-                .collect(Collectors.toList());
+            .peek(e -> e.setApplicationContext(appContext))
+            .collect(Collectors.toList());
     }
 
     /**
@@ -71,7 +68,8 @@ public final class LambdaEventHandler {
             .map(executor -> executor.apply(inputBytes, context))
             .filter(Optional::isPresent)
             .findFirst()
-            .map(r -> r.get());
+            .get();
+
         result.ifPresent(r -> {
             logger.info("Event summary: {}", r.summary());
             writeValueQuietly(output, r);

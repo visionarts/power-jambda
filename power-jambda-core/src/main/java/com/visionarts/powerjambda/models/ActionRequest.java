@@ -46,8 +46,8 @@ public class ActionRequest<T> {
     public ActionRequest(AwsProxyRequest request) {
         this.request = request;
         Optional.ofNullable(request).ifPresent(req -> {
-            pathParameters = toUrlDecodededMap(req.getPathParameters());
-            queryParameters = toUrlDecodededMap(req.getQueryStringParameters());
+            pathParameters = toUrlDecodedMap(req.getPathParameters());
+            queryParameters = toUrlDecodedMap(req.getQueryStringParameters());
         });
     }
 
@@ -118,12 +118,10 @@ public class ActionRequest<T> {
         return request.getBody();
     }
 
-    private Map<String, String> toUrlDecodededMap(Map<String, String> src) {
+    private Map<String, String> toUrlDecodedMap(Map<String, String> src) {
         return Optional.ofNullable(src)
-                .map(m -> {
-                    return m.entrySet().stream()
-                        .collect(Collectors.toMap(e -> urlDecode(e.getKey()), e -> urlDecode(e.getValue())));
-                })
+                .map(m -> m.entrySet().stream()
+                    .collect(Collectors.toMap(e -> urlDecode(e.getKey()), e -> urlDecode(e.getValue()))))
                 .orElseGet(() -> Collections.emptyMap());
     }
 

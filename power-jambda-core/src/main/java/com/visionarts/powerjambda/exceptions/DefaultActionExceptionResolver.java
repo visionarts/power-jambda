@@ -62,7 +62,7 @@ public class DefaultActionExceptionResolver<ResponseT> implements ExceptionResol
     @Override
     public <T> ResponseT handleException(Throwable exception, T action, Context context) throws InternalErrorException {
         this.exceptionClazz = exception.getClass();
-        this.actionClazz = (Class<?>) action.getClass();
+        this.actionClazz = action.getClass();
         try {
             return responseWriter.writeResponse(handle(exception, action, context));
         } catch (IOException e) {
@@ -77,7 +77,7 @@ public class DefaultActionExceptionResolver<ResponseT> implements ExceptionResol
      */
     private <T> ResponseEntity<?> handle(Throwable targetException, T action, Context context)
             throws InternalErrorException {
-        Method method = findExcepionHandler(targetException);
+        Method method = findExceptionHandler(targetException);
         Object retVal = invokeMethod(method, action, targetException, context);
 
         Utils.requireNonNull(retVal,
@@ -85,15 +85,14 @@ public class DefaultActionExceptionResolver<ResponseT> implements ExceptionResol
         return (ResponseEntity<?>) retVal;
     }
 
-    private Method findExcepionHandler(Throwable exception) throws InternalErrorException {
+    private Method findExceptionHandler(Throwable exception) throws InternalErrorException {
         Optional<Method> handler = findExceptionHandler(actionClazz, exceptionClazz);
         // fallback exception handlers if exists
         handler = OptionalUtils.or(handler, () -> findExceptionHandler(actionClazz, Exception.class));
         handler = OptionalUtils.or(handler, () -> findExceptionHandler(actionClazz, Throwable.class));
-        Method method = handler.orElseThrow(
+        return handler.orElseThrow(
             () -> new InternalErrorException(
                     "Not found any ExceptionHandler for " + exceptionClazz.getName(), exception));
-        return method;
     }
 
     private Optional<Method> findExceptionHandler(Class<?> actionClazz,
@@ -108,14 +107,11 @@ public class DefaultActionExceptionResolver<ResponseT> implements ExceptionResol
     private <T> Object invokeMethod(Method handler, T action, Throwable targetException, Context context)
             throws InternalErrorException {
         Object[] args = new Object[] { targetException, context };
-        Object ret = null;
 
         try {
-            ret = handler.invoke(action, args);
+            return handler.invoke(action, args);
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             throw new InternalErrorException("Method invocation error : " + handler.getName(), e);
         }
-
-        return ret;
     }
 }

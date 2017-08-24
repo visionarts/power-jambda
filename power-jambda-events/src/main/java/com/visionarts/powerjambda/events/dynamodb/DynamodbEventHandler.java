@@ -185,12 +185,11 @@ public class DynamodbEventHandler extends AbstractEventHandler<DynamodbEventEx, 
     protected Map<String, String> getEventAttributes(Map<String, AttributeValueEx> image) throws IOException {
         String attrsString = image.getOrDefault(EventConstants.DYNAMODB_ATTR_EVENT_ATTRIBUTES, DEFAULT_ATTRIBUTES)
                 .getS();
-        Map<String, String> eventAttrs = Utils.getObjectMapper()
+        return Utils.getObjectMapper()
                 .readValue(attrsString, new TypeReference<Map<String, String>>() {
                     // nothing to do
                     }
                 );
-        return eventAttrs;
     }
 
 }

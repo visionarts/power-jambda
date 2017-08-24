@@ -57,8 +57,6 @@ public abstract class LambdaBaseAction<RequestT, ResponseT, ActionRequestT, Acti
         try {
             result = handle(actionRequest, context);
             logger.info("Returned the action result {}", () -> maskableJson(result));
-        } catch (Exception e) {
-            throw e;
         } finally {
             afterHandle(actionRequest, context);
         }

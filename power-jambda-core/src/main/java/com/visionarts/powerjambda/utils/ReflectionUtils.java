@@ -57,8 +57,7 @@ public class ReflectionUtils {
         Objects.requireNonNull(packagePrefix);
         Objects.requireNonNull(annotation);
         Reflections reflections = new Reflections(packagePrefix);
-        Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(annotation);
-        return annotated;
+        return reflections.getTypesAnnotatedWith(annotation);
     }
 
     /**

@@ -29,9 +29,9 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
  */
 public abstract class MaskableSerializerBase<T> extends StdSerializer<T> {
 
-    private static final char DEFAULT_MASK_CHARCTER = '*';
+    private static final char DEFAULT_MASK_CHARACTER = '*';
 
-    private char maskingValue = DEFAULT_MASK_CHARCTER;
+    private char maskingValue = DEFAULT_MASK_CHARACTER;
 
     protected MaskableSerializerBase(Class<?> t, boolean dummy) {
         super(t, dummy);

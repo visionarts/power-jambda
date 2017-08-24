@@ -40,9 +40,6 @@ public class EventConstants {
     public static final String DETAIL_TYPE_SCHEDULED_EVENT = "Scheduled Event";
 
     /**
-     * DynamoDB-related
-     */
-    /**
      * The type of data modification that was performed on the DynamoDB table.
      */
     public enum DynamoDBEventName {

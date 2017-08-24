@@ -31,7 +31,7 @@ public class MaskableSerializerFactory {
 
     public static MaskableSerializerBase<?> createSerializer(JavaType javaType,
             MaskableSensitiveData annotation) {
-        MaskableSerializerBase<?> ser = null;
+        MaskableSerializerBase<?> ser;
         if (javaType.isCollectionLikeType()) {
             ser = new MaskableCollectionSerializer();
         } else {

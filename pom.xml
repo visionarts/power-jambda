@@ -12,6 +12,7 @@
     The java serverless microframework for RESTful API allows you to quickly develop applications
     that use Amazon API Gateway and AWS Lambda.
   </description>
+  <inceptionYear>2017</inceptionYear>
   <url>https://github.com/visionarts/power-jambda</url>
 
   <licenses>

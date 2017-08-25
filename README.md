@@ -87,6 +87,8 @@ public class SampleAction extends AbstractLambdaAction<SampleMessageBody, Sample
 The class is annotated a **@Route**, meaning it’s ready for use by AWS Lambda to handle  requests. **@Route** maps 'POST /sample' to this action class.
 When invoked from API Gateway using curl on the command line, the handle method returns 200 OK, including a json content serialized SampleMessageBody('application/json').
 
+See [RESTful API example](samples/simple-case) for more information.
+
 ### Tutorial: Return RESTful API response
 
 TBD

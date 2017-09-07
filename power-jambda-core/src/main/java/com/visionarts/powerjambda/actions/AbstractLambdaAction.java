@@ -21,12 +21,26 @@ import com.visionarts.powerjambda.AwsProxyRequest;
 import com.visionarts.powerjambda.AwsProxyResponse;
 import com.visionarts.powerjambda.RequestReader;
 import com.visionarts.powerjambda.ResponseWriter;
+import com.visionarts.powerjambda.annotations.Route;
+import com.visionarts.powerjambda.cors.NoneCorsConfiguration;
 import com.visionarts.powerjambda.exceptions.DefaultActionExceptionResolver;
 import com.visionarts.powerjambda.exceptions.InternalErrorException;
+import com.visionarts.powerjambda.filters.CorsFilter;
+import com.visionarts.powerjambda.filters.FilterChain;
 import com.visionarts.powerjambda.models.ActionRequest;
 
 public abstract class AbstractLambdaAction<T, ActionResultT>
         extends LambdaBaseAction<AwsProxyRequest, AwsProxyResponse, ActionRequest<T>, ActionResultT> {
+
+    protected final FilterChain<AwsProxyResponse> filterChain = new FilterChain<>();
+
+    public AbstractLambdaAction() {
+        Class<?> c = this.getClass();
+        Route route = c.getAnnotation(Route.class);
+        if (route.cors() != NoneCorsConfiguration.class) {
+            filterChain.addFilter(new CorsFilter(route.cors()));
+        }
+    }
 
     /**
      * Returns the type of the class modeled by the body type in the action request. <br>
@@ -68,7 +82,19 @@ public abstract class AbstractLambdaAction<T, ActionResultT>
             throws InternalErrorException {
         DefaultActionExceptionResolver<AwsProxyResponse> resolver =
                 new DefaultActionExceptionResolver<>(new JsonResponseWriter<>());
-        return resolver.handleException(exception, this, context);
+        return applyFilters(resolver.handleException(exception, this, context));
+    }
+
+    /**
+     * Applies filters to the response object.
+     *
+     * @param response to filter
+     * @return The response to be applied filters
+     */
+    @Override
+    protected AwsProxyResponse applyFilters(AwsProxyResponse response) {
+        filterChain.filter(response);
+        return response;
     }
 
 }

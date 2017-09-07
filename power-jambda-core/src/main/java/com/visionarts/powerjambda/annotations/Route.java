@@ -21,6 +21,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.visionarts.powerjambda.cors.CorsConfiguration;
+import com.visionarts.powerjambda.cors.DefaultCorsConfiguration;
 import com.visionarts.powerjambda.http.HttpMethod;
 
 @Retention(RetentionPolicy.RUNTIME)
@@ -28,4 +30,5 @@ import com.visionarts.powerjambda.http.HttpMethod;
 public @interface Route {
     String resourcePath();
     HttpMethod[] methods() default HttpMethod.NONE;
+    Class<? extends CorsConfiguration> cors() default DefaultCorsConfiguration.class;
 }

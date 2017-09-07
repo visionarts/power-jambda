@@ -19,7 +19,7 @@ in your project is with a dependency management system
   <dependency>
     <groupId>com.visionarts</groupId>
     <artifactId>power-jambda-core</artifactId>
-    <version>0.9.0</version>
+    <version>0.9.1</version>
   </dependency>
 </dependencies>
 ```
@@ -101,6 +101,35 @@ TBD
 
 TBD
 
+### Tutorial: CORS support
+By default, injects the ``Access-Control-Allow-Origin: *`` header to your responses,
+including error responses return from action.
+
+If more control of the CORS headers is desired, set the ``cors``
+parameter in your ``@Route`` to an instance of ``CorsConfiguration``.
+The ``CorsConfiguration`` interface can be implemented as follows.
+
+```Java
+public class MyCorsConfig implements CorsConfiguration {
+    @Override
+    public Optional<String> getAllowOrigin() {
+        return Optional.of("http://www.example.com");
+    }
+
+    @Override
+    public Optional<Boolean> getAllowCredentials() {
+        return Optional.of(true);
+    }
+}
+```
+```Java
+@Route(resourcePath = "/sample", methods = HttpMethod.POST, cors = MyCorsConfig.class)
+public class SampleAction extends AbstractLambdaAction<SampleMessageBody, SampleMessageBody> {
+}
+```
+If you disable CORS support, specify ``cors = NoneCorsConfiguration.class`` in your ``@Route``.
+
+    
 ## Building From Source
 
 Once you check out the code from GitHub, you can build it using Maven.

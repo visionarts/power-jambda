@@ -48,7 +48,6 @@ public abstract class LambdaBaseAction<RequestT, ResponseT, ActionRequestT, Acti
     private ResponseWriter<ActionResultT, ResponseT> responseWriter;
     private ActionRequestT actionRequest;
 
-
     public final ResponseT handleRequest(RequestT request, Context context) throws Exception {
         initialize(request, context);
 
@@ -61,7 +60,7 @@ public abstract class LambdaBaseAction<RequestT, ResponseT, ActionRequestT, Acti
             afterHandle(actionRequest, context);
         }
 
-        return writeResponse(result);
+        return applyFilters(writeResponse(result));
     }
 
     private void initialize(RequestT request, Context context) throws ClientErrorException {
@@ -85,7 +84,7 @@ public abstract class LambdaBaseAction<RequestT, ResponseT, ActionRequestT, Acti
     /**
      * Convenience method for logging an object with mask.
      *
-     * @param object to jsonify with mask
+     * @param object to serialize as json with mask
      * @return A json string, returns null if error occurs
      */
     protected final String maskableJson(Object object) {
@@ -130,5 +129,16 @@ public abstract class LambdaBaseAction<RequestT, ResponseT, ActionRequestT, Acti
      * @return A {@link ResponseWriter} object for writing a response from the Lambda function
      */
     protected abstract ResponseWriter<ActionResultT, ResponseT> responseWriter(RequestT request, Context context);
+
+    /**
+     * Applies filters to the response object.
+     * By default, this method should do nothing.
+     *
+     * @param response to filter
+     * @return The response to be applied filters
+     */
+    protected ResponseT applyFilters(ResponseT response) {
+        return response;
+    }
 
 }

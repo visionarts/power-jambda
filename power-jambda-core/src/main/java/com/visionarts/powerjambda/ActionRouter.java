@@ -47,8 +47,6 @@ public class ActionRouter extends AbstractRouter<AwsProxyRequest, AwsProxyRespon
     public AwsProxyResponse apply(AwsProxyRequest request, Context context) {
         AwsProxyResponse response = super.apply(request, context);
         logger.info("Return the response code : {}", response.getStatusCode());
-        // TODO How do we set CORS?
-        response.addHeaderIfAbsent("Access-Control-Allow-Origin", "*");
         return response;
     }
 

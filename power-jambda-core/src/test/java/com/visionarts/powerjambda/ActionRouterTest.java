@@ -16,21 +16,9 @@
 
 package com.visionarts.powerjambda;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
-
 import java.io.InputStream;
 
-import org.junit.Before;
-import org.junit.Test;
-
 import com.amazonaws.services.lambda.runtime.Context;
-import com.visionarts.powerjambda.ActionRouter;
-import com.visionarts.powerjambda.ApplicationContext;
-import com.visionarts.powerjambda.AwsProxyRequest;
-import com.visionarts.powerjambda.AwsProxyResponse;
 import com.visionarts.powerjambda.actions.TestActionWithExceptionHandler.TestErrorBody;
 import com.visionarts.powerjambda.actions.models.ComplexData;
 import com.visionarts.powerjambda.actions.models.Person;
@@ -38,6 +26,18 @@ import com.visionarts.powerjambda.models.DefaultErrorResponseBody;
 import com.visionarts.powerjambda.testing.AwsProxyRequestBuilder;
 import com.visionarts.powerjambda.testing.MockLambdaContext;
 import com.visionarts.powerjambda.testutils.JsonUtils;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.Matchers.hasKey;
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNot.not;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 
 /**
@@ -49,6 +49,8 @@ public class ActionRouterTest {
     private static final String REQUEST_JSON_TEMPLATE = "requests/awsproxyrequest_api-gateway.json";
     private static final String CONTENT_TYPE = "Content-Type";
     private static final String APPLICATION_JSON = "application/json";
+    private static final String ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
+    private static final String ACCESS_CONTROL_ALLOW_CREDENTIALS = "Access-Control-Allow-Credentials";
     private static final Context mockContext = new MockLambdaContext();
 
     private ActionRouter router;
@@ -256,10 +258,46 @@ public class ActionRouterTest {
 
         assertEquals(401, res.getStatusCode());
         assertThat(res.getHeaders(), hasEntry(CONTENT_TYPE, APPLICATION_JSON));
+        assertThat(res.getHeaders(), hasEntry(ACCESS_CONTROL_ALLOW_ORIGIN, "*"));
         assertEquals(
                 "{\"error\":\"Unauthorized Error\",\"description\":\"Bad Credentials\"}",
                 res.getBody());
         assertFalse(res.isBase64Encoded());
     }
 
+    @Test
+    public void testActionWithoutCors() throws Exception {
+
+        AwsProxyRequest req = new AwsProxyRequestBuilder(requestJsonStream)
+                .resourcePath("/test_action_without_cors")
+                .httpMethod("GET")
+                .build();
+
+        AwsProxyResponse res = router.apply(req, mockContext);
+
+        assertEquals(200, res.getStatusCode());
+        assertThat(res.getHeaders(), hasEntry(CONTENT_TYPE, APPLICATION_JSON));
+        assertThat(res.getHeaders(), is(not((hasKey(ACCESS_CONTROL_ALLOW_ORIGIN)))));
+        assertThat(res.getHeaders(), is(not((hasKey(ACCESS_CONTROL_ALLOW_CREDENTIALS)))));
+        assertEquals("\"TestActionWithoutCors\"", res.getBody());
+        assertFalse(res.isBase64Encoded());
+    }
+
+    @Test
+    public void testActionWithMyCors() throws Exception {
+
+        AwsProxyRequest req = new AwsProxyRequestBuilder(requestJsonStream)
+                .resourcePath("/test_action_with_mycors")
+                .httpMethod("GET")
+                .build();
+
+        AwsProxyResponse res = router.apply(req, mockContext);
+
+        assertEquals(200, res.getStatusCode());
+        assertThat(res.getHeaders(), hasEntry(CONTENT_TYPE, APPLICATION_JSON));
+        assertThat(res.getHeaders(), hasEntry(ACCESS_CONTROL_ALLOW_ORIGIN, "http://www.example.com"));
+        assertThat(res.getHeaders(), hasEntry(ACCESS_CONTROL_ALLOW_CREDENTIALS, "true"));
+        assertEquals("\"TestActionWithMyCors\"", res.getBody());
+        assertFalse(res.isBase64Encoded());
+    }
 }

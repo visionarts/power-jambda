@@ -25,15 +25,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Represents an Amazon SNS event.<br>
  * <br>
  * Note: <br>
- *  This class is used for ourself deserialization/Unmarshal SNS event using jackson.
+ *  This class is used for ourself deserialization/Unmarshal Sns event using jackson.
  */
-public class SNSEventEx {
+public class SnsEvent {
 
     /**
-     * Represents an SNS message
+     * Represents a Sns message
      *
      */
-    public static class SNS {
+    public static class Sns {
         @JsonProperty("MessageAttributes")
         private Map<String, MessageAttribute> messageAttributes;
 
@@ -79,8 +79,7 @@ public class SNSEventEx {
          * Sets the attributes associated with the message
          * @param messageAttributes A map object with string and message attribute key/value pairs
          */
-        public void setMessageAttributes(
-                Map<String, MessageAttribute> messageAttributes) {
+        public void setMessageAttributes(Map<String, MessageAttribute> messageAttributes) {
             this.messageAttributes = messageAttributes;
         }
 
@@ -247,13 +246,13 @@ public class SNSEventEx {
 
 
     /**
-     * Represents an SNS message record. SNS message records are used to send
-     * SNS messages to Lambda Functions.
+     * Represents a Sns message record. Sns message records are used to send
+     * Sns messages to Lambda Functions.
      *
      */
-    public static class SNSRecord {
+    public static class SnsRecord {
         @JsonProperty("Sns")
-        private SNS sns;
+        private Sns sns;
 
         @JsonProperty("EventVersion")
         private String eventVersion;
@@ -265,18 +264,18 @@ public class SNSEventEx {
         private String eventSubscriptionArn;
 
         /**
-         *  Gets the SNS message
+         *  Gets the Sns message
          *
          */
-        public SNS getSNS() {
+        public Sns getSns() {
             return sns;
         }
 
         /**
-         * Sets the SNS message
-         * @param sns An SNS object representing the SNS message
+         * Sets the Sns message
+         * @param sns A Sns object representing the Sns message
          */
-        public void setSns(SNS sns) {
+        public void setSns(Sns sns) {
             this.sns = sns;
         }
 
@@ -331,7 +330,7 @@ public class SNSEventEx {
     }
 
     /**
-     * Represents an SNS message attribute
+     * Represents a Sns message attribute
      *
      */
     public static class MessageAttribute {
@@ -374,21 +373,21 @@ public class SNSEventEx {
     }
 
     @JsonProperty("Records")
-    private List<SNSRecord> records;
+    private List<SnsRecord> records;
 
     /**
-     *  Gets the list of SNS records
+     *  Gets the list of Sns records
      *
      */
-    public List<SNSRecord> getRecords() {
+    public List<SnsRecord> getRecords() {
         return records;
     }
 
     /**
-     * Sets a list of SNS records
-     * @param records A list of SNS record objects
+     * Sets a list of Sns records
+     * @param records A list of Sns record objects
      */
-    public void setRecords(List<SNSRecord> records) {
+    public void setRecords(List<SnsRecord> records) {
         this.records = records;
     }
 }

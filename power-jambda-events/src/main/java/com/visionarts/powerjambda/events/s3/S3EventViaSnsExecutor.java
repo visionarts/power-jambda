@@ -23,47 +23,47 @@ import com.amazonaws.services.s3.event.S3EventNotification;
 import com.visionarts.powerjambda.events.EventConstants;
 import com.visionarts.powerjambda.events.action.AbstractEventAction;
 import com.visionarts.powerjambda.events.internal.EventDeserializeUtils;
-import com.visionarts.powerjambda.events.model.SNSEventEx;
-import com.visionarts.powerjambda.events.sns.SNSEventExecutor;
+import com.visionarts.powerjambda.events.model.SnsEvent;
+import com.visionarts.powerjambda.events.sns.SnsEventExecutor;
 import org.apache.logging.log4j.ThreadContext;
 
-public class S3EventViaSNSExecutor extends S3EventExecutor {
+public class S3EventViaSnsExecutor extends S3EventExecutor {
 
-    public S3EventViaSNSExecutor(Class<? extends AbstractEventAction<?>> s3Action) {
+    public S3EventViaSnsExecutor(Class<? extends AbstractEventAction<?>> s3Action) {
         super(s3Action);
     }
 
     @Override
     public Optional<S3EventNotification> resolve(final byte[] input) {
-        Optional<SNSEventEx> snsEvent = resolveSNSEvent(input);
+        Optional<SnsEvent> snsEvent = resolveSnsEvent(input);
         return snsEvent.flatMap(sns -> {
             try {
-                String message = sns.getRecords().get(0).getSNS().getMessage();
-                Optional<S3EventNotification> event = EventDeserializeUtils.resolveAWSEvent(
+                String message = sns.getRecords().get(0).getSns().getMessage();
+                Optional<S3EventNotification> event = EventDeserializeUtils.resolveAwsEvent(
                             message.getBytes(), S3EventNotification.class, S3_EVENT_CONDITION);
                 event.ifPresent(e -> {
                     ThreadContext.put(EventConstants.LOG_THREAD_CONTEXT_EVENT_KEY,
                             EventConstants.EVENT_SOURCE_S3_VIA_SNS);
-                    logger.info("Deserialize current input to S3EventNotification via SNS instance successfully");
+                    logger.info("Deserialize current input to S3EventNotification via Sns instance successfully");
                 });
                 return event;
             } catch (IOException e) {
                 // fall through
-                logger.error("Can not deserialize S3EventNotification via SNS", e);
+                logger.error("Can not deserialize S3EventNotification via Sns", e);
                 return Optional.empty();
             }
         });
     }
 
-    private Optional<SNSEventEx> resolveSNSEvent(final byte[] input) {
-        Optional<SNSEventEx> event;
+    private Optional<SnsEvent> resolveSnsEvent(final byte[] input) {
+        Optional<SnsEvent> event;
         try {
-            event = EventDeserializeUtils.resolveAWSEvent(
-                        input, SNSEventEx.class, SNSEventExecutor.SNS_EVENT_CONDITION);
+            event = EventDeserializeUtils.resolveAwsEvent(
+                        input, SnsEvent.class, SnsEventExecutor.SNS_EVENT_CONDITION);
         } catch (IOException e) {
             // fall through
             event = Optional.empty();
-            logger.error("Can not deserialize SNSEventEx", e);
+            logger.error("Can not deserialize SnsEvent", e);
         }
         return event;
     }

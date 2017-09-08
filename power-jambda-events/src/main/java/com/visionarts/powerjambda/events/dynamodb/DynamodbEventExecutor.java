@@ -50,7 +50,7 @@ public class DynamodbEventExecutor extends AbstractEventExecutor<DynamodbEventEx
     public Optional<DynamodbEventEx> resolve(final byte[] input) {
         Optional<DynamodbEventEx> event;
         try {
-            event = EventDeserializeUtils.resolveAWSEvent(
+            event = EventDeserializeUtils.resolveAwsEvent(
                         input, DynamodbEventEx.class, DYNAMODB_EVENT_CONDITION);
             event.ifPresent(e -> {
                 ThreadContext.put(EventConstants.LOG_THREAD_CONTEXT_EVENT_KEY,

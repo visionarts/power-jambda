@@ -25,37 +25,37 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.visionarts.powerjambda.events.AbstractEventExecutor;
 import com.visionarts.powerjambda.events.EventConstants;
 import com.visionarts.powerjambda.events.internal.EventDeserializeUtils;
-import com.visionarts.powerjambda.events.model.SNSEventEx;
+import com.visionarts.powerjambda.events.model.SnsEvent;
 import com.visionarts.powerjambda.utils.FunctionalUtils;
 import org.apache.logging.log4j.ThreadContext;
 
-public class SNSEventExecutor extends AbstractEventExecutor<SNSEventEx, SNSEventResult> {
+public class SnsEventExecutor extends AbstractEventExecutor<SnsEvent, SnsEventResult> {
 
-    public static final Predicate<SNSEventEx> SNS_EVENT_CONDITION = e ->
+    public static final Predicate<SnsEvent> SNS_EVENT_CONDITION = e ->
         FunctionalUtils.isNotEmpty(e.getRecords()) &&
             EventConstants.EVENT_SOURCE_SNS.equals(e.getRecords().get(0).getEventSource());
 
     @Override
-    public Optional<SNSEventEx> resolve(final byte[] input) {
-        Optional<SNSEventEx> event;
+    public Optional<SnsEvent> resolve(final byte[] input) {
+        Optional<SnsEvent> event;
         try {
-            event = EventDeserializeUtils.resolveAWSEvent(
-                        input, SNSEventEx.class, SNS_EVENT_CONDITION);
+            event = EventDeserializeUtils.resolveAwsEvent(
+                        input, SnsEvent.class, SNS_EVENT_CONDITION);
             event.ifPresent(e -> {
                 ThreadContext.put(EventConstants.LOG_THREAD_CONTEXT_EVENT_KEY,
                         EventConstants.EVENT_SOURCE_SNS);
-                logger.info("Deserialize current input to SNSEventEx instance successfully");
+                logger.info("Deserialize current input to SnsEvent instance successfully");
             });
         } catch (IOException e) {
             // fall through
             event = Optional.empty();
-            logger.error("Can not deserialize SNSEventEx", e);
+            logger.error("Can not deserialize SnsEvent", e);
         }
         return event;
     }
 
     @Override
-    public Supplier<RequestHandler<SNSEventEx, SNSEventResult>> getEventHandler() {
-        return () -> new SNSEventHandler(getApplicationContext());
+    public Supplier<RequestHandler<SnsEvent, SnsEventResult>> getEventHandler() {
+        return () -> new SnsEventHandler(getApplicationContext());
     }
 }

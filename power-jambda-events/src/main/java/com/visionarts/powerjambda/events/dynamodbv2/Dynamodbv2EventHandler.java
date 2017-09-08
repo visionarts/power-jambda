@@ -65,11 +65,11 @@ public class Dynamodbv2EventHandler extends DynamodbEventHandler {
 
     @Override
     protected AwsEventRequest readDynamodbStreamRecord(DynamodbStreamRecord dynamodbStreamRecord) {
-        String eventID = dynamodbStreamRecord.getEventID();
+        String eventId = dynamodbStreamRecord.getEventID();
         StreamRecordEx record = dynamodbStreamRecord.getDynamodb();
         Map<String, AttributeValueEx> newImage = record.getNewImage();
         if (!containsRequiredKeys(newImage)) {
-            logger.error("Skip record : eventID = {} missing required key", eventID);
+            logger.error("Skip record : eventID = {} missing required key", eventId);
             return null;
         }
 
@@ -79,7 +79,7 @@ public class Dynamodbv2EventHandler extends DynamodbEventHandler {
             body = Utils.getObjectMapper().writeValueAsString(requestBodyMapper.apply(dynamodbStreamRecord));
         } catch (JsonProcessingException e) {
             logger.error("Skip record : eventID = {} failed to serialize event request body, msg = {}",
-                    eventID, e.getMessage());
+                    eventId, e.getMessage());
             return null;
         }
         Map<String, String> eventAttrs;
@@ -87,7 +87,7 @@ public class Dynamodbv2EventHandler extends DynamodbEventHandler {
             eventAttrs = getEventAttributes(newImage);
         } catch (IOException e) {
             logger.error("Skip record : eventID = {} failed to deserialize JSON content {} in {}, msg = {}",
-                    eventID,
+                    eventId,
                     newImage.get(EventConstants.DYNAMODB_ATTR_EVENT_ATTRIBUTES).getS(),
                     EventConstants.DYNAMODB_ATTR_EVENT_ATTRIBUTES,
                     e.getMessage());

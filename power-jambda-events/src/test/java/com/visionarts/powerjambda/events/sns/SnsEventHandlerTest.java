@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 
+import com.visionarts.powerjambda.events.model.SnsEvent;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -33,23 +34,22 @@ import com.visionarts.powerjambda.ApplicationContext;
 import com.visionarts.powerjambda.actions.TestAction1;
 import com.visionarts.powerjambda.actions.models.TestAction1Body;
 import com.visionarts.powerjambda.events.model.EventActionRequest;
-import com.visionarts.powerjambda.events.model.SNSEventEx;
 import com.visionarts.powerjambda.testing.MockLambdaContext;
 
 import mockit.Expectations;
 
 
 /**
- * Test case for {@link SNSEventHandler} class. <br>
+ * Test case for {@link SnsEventHandler} class. <br>
  * <br>
  */
-public class SNSEventHandlerTest {
+public class SnsEventHandlerTest {
 
     private static final String SNS_REQUEST_JSON_TEMPLATE = "events/sns2.json";
     private static final ObjectMapper om = new ObjectMapper();
     private static final Context mockContext = new MockLambdaContext();
 
-    private SNSEventHandler handler;
+    private SnsEventHandler handler;
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -57,7 +57,7 @@ public class SNSEventHandlerTest {
 
     @Before
     public void setUp() throws Exception {
-        handler = new SNSEventHandler(new ApplicationContext(this.getClass()));
+        handler = new SnsEventHandler(new ApplicationContext(this.getClass()));
     }
 
     @SuppressWarnings("unchecked")
@@ -72,15 +72,15 @@ public class SNSEventHandlerTest {
             }
         };
 
-        SNSEventResult result = handler.handleRequest(supplyEvent(input), mockContext);
+        SnsEventResult result = handler.handleRequest(supplyEvent(input), mockContext);
         assertEquals(1, result.getSuccessItems().size());
         assertEquals(0, result.getFailureItems().size());
         assertEquals(0, result.getSkippedItems().size());
     }
 
-    private SNSEventEx supplyEvent(InputStream input) {
+    private SnsEvent supplyEvent(InputStream input) {
         try {
-            return om.readValue(input, SNSEventEx.class);
+            return om.readValue(input, SnsEvent.class);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }

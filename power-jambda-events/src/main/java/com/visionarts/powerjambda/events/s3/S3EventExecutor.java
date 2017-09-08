@@ -47,7 +47,7 @@ public class S3EventExecutor extends AbstractEventExecutor<S3EventNotification, 
     public Optional<S3EventNotification> resolve(byte[] input) {
         Optional<S3EventNotification> event;
         try {
-            event = EventDeserializeUtils.resolveAWSEvent(
+            event = EventDeserializeUtils.resolveAwsEvent(
                         input, S3EventNotification.class, S3_EVENT_CONDITION);
             event.ifPresent(e -> {
                 ThreadContext.put(EventConstants.LOG_THREAD_CONTEXT_EVENT_KEY,

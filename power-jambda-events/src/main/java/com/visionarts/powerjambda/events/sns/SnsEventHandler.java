@@ -26,30 +26,30 @@ import com.visionarts.powerjambda.ApplicationContext;
 import com.visionarts.powerjambda.events.AbstractEventHandler;
 import com.visionarts.powerjambda.events.AwsEventRequest;
 import com.visionarts.powerjambda.events.AwsEventResponse;
-import com.visionarts.powerjambda.events.model.SNSEventEx;
-import com.visionarts.powerjambda.events.model.SNSEventEx.SNS;
+import com.visionarts.powerjambda.events.model.SnsEvent;
+import com.visionarts.powerjambda.events.model.SnsEvent.Sns;
 import com.visionarts.powerjambda.utils.Utils;
 
 
 /**
- * The class has the event handler for SNS event.
+ * The class has the event handler for Sns event.
  *
  */
-public class SNSEventHandler extends AbstractEventHandler<SNSEventEx, SNSEventResult, AwsEventRequest> {
+public class SnsEventHandler extends AbstractEventHandler<SnsEvent, SnsEventResult, AwsEventRequest> {
 
-    private static class SNSEventMessage {
+    private static class SnsEventMessage {
         public String action;
         public JsonNode body;
         public Map<String, String> eventAttrs;
     }
 
-    public SNSEventHandler(ApplicationContext applicationContext) {
+    public SnsEventHandler(ApplicationContext applicationContext) {
         super(applicationContext);
     }
 
     @Override
-    public AwsEventRequest readEvent(SNSEventEx event) {
-        SNS sns = event.getRecords().get(0).getSNS();
+    public AwsEventRequest readEvent(SnsEvent event) {
+        Sns sns = event.getRecords().get(0).getSns();
         try {
             return buildRequest(sns);
         } catch (IOException e) {
@@ -57,12 +57,12 @@ public class SNSEventHandler extends AbstractEventHandler<SNSEventEx, SNSEventRe
         }
     }
 
-    protected AwsEventRequest buildRequest(SNS sns) throws IOException {
+    protected AwsEventRequest buildRequest(Sns sns) throws IOException {
         String subject = sns.getSubject();
         String message = sns.getMessage();
 
-        logger.info("SNS Notification : {}", subject);
-        SNSEventMessage msg = Utils.getObjectMapper().readValue(message, SNSEventMessage.class);
+        logger.info("Sns Notification : {}", subject);
+        SnsEventMessage msg = Utils.getObjectMapper().readValue(message, SnsEventMessage.class);
         return new AwsEventRequest()
                     .action(msg.action)
                     .body(msg.body.toString())
@@ -70,9 +70,9 @@ public class SNSEventHandler extends AbstractEventHandler<SNSEventEx, SNSEventRe
     }
 
     @Override
-    protected SNSEventResult handleEvent(SNSEventEx event, Context context) {
+    protected SnsEventResult handleEvent(SnsEvent event, Context context) {
         AwsEventRequest request = readEvent(event);
-        SNSEventResult result = new SNSEventResult();
+        SnsEventResult result = new SnsEventResult();
         AwsEventResponse res = actionRouterHandle(request, context);
         if (res.isSuccessful()) {
             result.addSuccessItem(request);

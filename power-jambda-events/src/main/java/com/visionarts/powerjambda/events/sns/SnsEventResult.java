@@ -20,9 +20,9 @@ import com.visionarts.powerjambda.events.AwsEventRequest;
 import com.visionarts.powerjambda.events.Result;
 
 /**
- * Represents a result of processing SNS event.
+ * Represents a result of processing Sns event.
  *
  */
-public class SNSEventResult extends Result<AwsEventRequest> {
+public class SnsEventResult extends Result<AwsEventRequest> {
     // nothing to do
 }

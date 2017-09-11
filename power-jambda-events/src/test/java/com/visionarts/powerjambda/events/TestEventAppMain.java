@@ -21,7 +21,7 @@ import java.io.OutputStream;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.visionarts.powerjambda.events.actions.S3EventAction;
-import com.visionarts.powerjambda.events.dynamodb.DynamodbEventExecutor;
+import com.visionarts.powerjambda.events.dynamodb.DynamoDbEventExecutor;
 import com.visionarts.powerjambda.events.s3.S3EventExecutor;
 import com.visionarts.powerjambda.events.s3.S3EventViaSnsExecutor;
 import com.visionarts.powerjambda.events.schedule.ScheduledEventExecutor;
@@ -29,7 +29,7 @@ import com.visionarts.powerjambda.events.sns.SnsEventExecutor;
 
 public class TestEventAppMain {
     private static final EventExecutorRegistry registry = new EventExecutorRegistry()
-        .register(new DynamodbEventExecutor())
+        .register(new DynamoDbEventExecutor())
         .register(new S3EventViaSnsExecutor(S3EventAction.class)
                     .throwOnFailure(true))
         .register(new SnsEventExecutor()

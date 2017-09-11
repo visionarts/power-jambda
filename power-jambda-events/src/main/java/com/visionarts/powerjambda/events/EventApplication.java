@@ -42,7 +42,7 @@ import com.visionarts.powerjambda.logging.LambdaLoggerHelper;
  * public class MyEventApplication {
  *
  *   private static final EventExecutorRegistry registry = new EventExecutorRegistry()
- *       .register(new DynamodbEventExecutor())
+ *       .register(new DynamoDbEventExecutor())
  *       .register(new SnsEventExecutor())
  *       .register(new ScheduledEventExecutor());
  *

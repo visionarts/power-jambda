@@ -21,10 +21,10 @@ import java.util.function.Supplier;
 
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.visionarts.powerjambda.events.EventConstants;
-import com.visionarts.powerjambda.events.dynamodb.DynamodbEventExecutor;
-import com.visionarts.powerjambda.events.dynamodb.DynamodbEventResult;
-import com.visionarts.powerjambda.events.model.DynamodbEventEx;
-import com.visionarts.powerjambda.events.model.DynamodbEventEx.DynamodbStreamRecord;
+import com.visionarts.powerjambda.events.dynamodb.DynamoDbEventExecutor;
+import com.visionarts.powerjambda.events.dynamodb.DynamoDbEventResult;
+import com.visionarts.powerjambda.events.model.DynamoDbEvent;
+import com.visionarts.powerjambda.events.model.DynamoDbEvent.DynamoDbStreamRecord;
 import com.visionarts.powerjambda.events.model.EventActionRequest;
 
 /**
@@ -33,14 +33,14 @@ import com.visionarts.powerjambda.events.model.EventActionRequest;
  * <br>
  *
  * <b>Caution:</b>
- * This class must be mutually exclusive with {@link DynamodbEventExecutor}.
+ * This class must be mutually exclusive with {@link DynamoDbEventExecutor}.
  */
-public class Dynamodbv2EventExecutor extends DynamodbEventExecutor {
+public class DynamoDbV2EventExecutor extends DynamoDbEventExecutor {
 
-    private final Supplier<RequestHandler<DynamodbEventEx, DynamodbEventResult>> supplier;
+    private final Supplier<RequestHandler<DynamoDbEvent, DynamoDbEventResult>> supplier;
 
     /**
-     * Constructs new Dynamodbv2EventExecutor instance with given parameters.<br>
+     * Constructs new DynamoDbV2EventExecutor instance with given parameters.<br>
      * <br>
      *
      * @param parallelStreamSize A positive stream size to decide parallel execution for actions,
@@ -49,17 +49,17 @@ public class Dynamodbv2EventExecutor extends DynamodbEventExecutor {
      *                          using attribute values in a record of DynamoDB Streams
      * @param availableEventNames Trigger types of data modification to invoke event action
      */
-    public Dynamodbv2EventExecutor(
+    public DynamoDbV2EventExecutor(
             int parallelStreamSize,
-            Function<DynamodbStreamRecord, ?> requestBodyMapper,
-            EventConstants.DynamoDBEventName... availableEventNames) {
+            Function<DynamoDbStreamRecord, ?> requestBodyMapper,
+            EventConstants.DynamoDbEventName... availableEventNames) {
         supplier = () ->
-            new Dynamodbv2EventHandler(getApplicationContext(), parallelStreamSize,
+            new DynamoDbV2EventHandler(getApplicationContext(), parallelStreamSize,
                     requestBodyMapper, availableEventNames);
     }
 
     @Override
-    public Supplier<RequestHandler<DynamodbEventEx, DynamodbEventResult>> getEventHandler() {
+    public Supplier<RequestHandler<DynamoDbEvent, DynamoDbEventResult>> getEventHandler() {
         return supplier;
     }
 

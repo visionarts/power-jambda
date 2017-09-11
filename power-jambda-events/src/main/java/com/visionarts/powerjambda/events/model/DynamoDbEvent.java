@@ -26,15 +26,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Note: <br>
  *  This class is used for ourself deserialization/Unmarshal dynamodb event using jackson.
  */
-public class DynamodbEventEx {
+public class DynamoDbEvent {
     @JsonProperty("Records")
-    private List<DynamodbStreamRecord> records;
+    private List<DynamoDbStreamRecord> records;
 
     /**
      * Gets the list of DynamoDB event records
      *
      */
-    public List<DynamodbStreamRecord> getRecords() {
+    public List<DynamoDbStreamRecord> getRecords() {
         return records;
     }
 
@@ -42,30 +42,31 @@ public class DynamodbEventEx {
      * Sets the list of DynamoDB event records
      * @param records a list of DynamoDb event records
      */
-    public void setRecords(List<DynamodbStreamRecord> records) {
+    public void setRecords(List<DynamoDbStreamRecord> records) {
         this.records = records;
     }
 
     /**
      * The unit of data of an Amazon DynamoDB event
      */
-    public static class DynamodbStreamRecord extends RecordEx {
-        private String eventSourceARN;
+    public static class DynamoDbStreamRecord extends Record {
+        @JsonProperty("eventSourceARN")
+        private String eventSourceArn;
 
         /**
          * Gets the event source arn of DynamoDB
          *
          */
-        public String getEventSourceARN() {
-            return eventSourceARN;
+        public String getEventSourceArn() {
+            return eventSourceArn;
         }
 
         /**
          * Sets the event source arn of DynamoDB
-         * @param eventSourceARN A string containing the event source arn
+         * @param eventSourceArn A string containing the event source arn
          */
-        public void setEventSourceARN(String eventSourceARN) {
-            this.eventSourceARN = eventSourceARN;
+        public void setEventSourceArn(String eventSourceArn) {
+            this.eventSourceArn = eventSourceArn;
         }
     }
 }

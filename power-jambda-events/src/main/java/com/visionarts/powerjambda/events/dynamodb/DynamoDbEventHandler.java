@@ -34,11 +34,11 @@ import com.visionarts.powerjambda.events.AbstractEventHandler;
 import com.visionarts.powerjambda.events.AwsEventRequest;
 import com.visionarts.powerjambda.events.AwsEventResponse;
 import com.visionarts.powerjambda.events.EventConstants;
-import com.visionarts.powerjambda.events.EventConstants.DynamoDBEventName;
-import com.visionarts.powerjambda.events.model.AttributeValueEx;
-import com.visionarts.powerjambda.events.model.DynamodbEventEx;
-import com.visionarts.powerjambda.events.model.DynamodbEventEx.DynamodbStreamRecord;
-import com.visionarts.powerjambda.events.model.RecordEx.StreamRecordEx;
+import com.visionarts.powerjambda.events.EventConstants.DynamoDbEventName;
+import com.visionarts.powerjambda.events.model.AttributeValue;
+import com.visionarts.powerjambda.events.model.DynamoDbEvent;
+import com.visionarts.powerjambda.events.model.DynamoDbEvent.DynamoDbStreamRecord;
+import com.visionarts.powerjambda.events.model.Record.StreamRecord;
 import com.visionarts.powerjambda.utils.Utils;
 
 
@@ -46,13 +46,13 @@ import com.visionarts.powerjambda.utils.Utils;
  * The class has the event handler for DynamoDB Streams event.
  *
  */
-public class DynamodbEventHandler extends AbstractEventHandler<DynamodbEventEx, DynamodbEventResult, List<AwsEventRequest>> {
+public class DynamoDbEventHandler extends AbstractEventHandler<DynamoDbEvent, DynamoDbEventResult, List<AwsEventRequest>> {
 
     private static final int DEFAULT_PARALLEL_SIZE = 1;
     private static final String EMPTY_JSON_CONTENT = "{}";
-    private static final AttributeValueEx DEFAULT_ATTRIBUTES = new AttributeValueEx(EMPTY_JSON_CONTENT);
+    private static final AttributeValue DEFAULT_ATTRIBUTES = new AttributeValue(EMPTY_JSON_CONTENT);
 
-    private final Set<DynamoDBEventName> availableEventNames;
+    private final Set<DynamoDbEventName> availableEventNames;
     private final int parallelStreamSize;
 
     private enum Result {
@@ -62,37 +62,37 @@ public class DynamodbEventHandler extends AbstractEventHandler<DynamodbEventEx, 
         ;
     }
 
-    private static class DynamodbStreamRecordResult {
+    private static class DynamoDbStreamRecordResult {
         public final Result result;
         public final AwsEventRequest request;
 
-        DynamodbStreamRecordResult(Result result, AwsEventRequest request) {
+        DynamoDbStreamRecordResult(Result result, AwsEventRequest request) {
             this.result = result;
             this.request = request;
         }
     }
 
     /**
-     * Constructs new DynamodbEventHandler instance with default parameters.<br>
+     * Constructs new DynamoDbEventHandler instance with default parameters.<br>
      * <br>
      * Note:
-     * This event handler's trigger type is {@link DynamoDBEventName#INSERT} and
+     * This event handler's trigger type is {@link DynamoDbEventName#INSERT} and
      * parallelly execute when record size in dynamodb event is greater than {@code 1}.
      */
-    public DynamodbEventHandler(ApplicationContext applicationContext) {
-        this(applicationContext, DEFAULT_PARALLEL_SIZE, DynamoDBEventName.INSERT);
+    public DynamoDbEventHandler(ApplicationContext applicationContext) {
+        this(applicationContext, DEFAULT_PARALLEL_SIZE, DynamoDbEventName.INSERT);
     }
 
     /**
-     * Constructs new DynamodbEventHandler instance with given parameters.<br>
+     * Constructs new DynamoDbEventHandler instance with given parameters.<br>
      * <br>
      *
      * @param parallelStreamSize positive stream size to decide parallel execution for actions,
      *                           specify less than or equal this value to execute sequentially
      * @param availableEventNames trigger types of data modification to invoke event action
      */
-    public DynamodbEventHandler(ApplicationContext applicationContext,
-                                int parallelStreamSize, DynamoDBEventName... availableEventNames) {
+    public DynamoDbEventHandler(ApplicationContext applicationContext,
+                                int parallelStreamSize, DynamoDbEventName... availableEventNames) {
         super(applicationContext);
         this.parallelStreamSize = parallelStreamSize;
         this.availableEventNames = Collections.unmodifiableSet(
@@ -100,20 +100,20 @@ public class DynamodbEventHandler extends AbstractEventHandler<DynamodbEventEx, 
     }
 
     @Override
-    public DynamodbEventResult handleRequest(DynamodbEventEx input, Context context) {
+    public DynamoDbEventResult handleRequest(DynamoDbEvent input, Context context) {
         logger.info("RecordSize : {}", () -> input.getRecords().size());
         return super.handleRequest(input, context);
     }
 
     @Override
-    protected DynamodbEventResult handleEvent(DynamodbEventEx event, Context context) {
+    protected DynamoDbEventResult handleEvent(DynamoDbEvent event, Context context) {
         List<AwsEventRequest> validRequests = readEvent(event);
         Map<Result, List<AwsEventRequest>> reqResults = streamIfAvailableParallel(validRequests)
             .map(req -> handleRouterRequest(req, context))
             .collect(Collectors.groupingByConcurrent(r -> r.result,
                     Collectors.mapping(r -> r.request, Collectors.toList())));
 
-        DynamodbEventResult result = new DynamodbEventResult();
+        DynamoDbEventResult result = new DynamoDbEventResult();
         result.setSuccessItems(reqResults.getOrDefault(Result.SUCCEEDED, Collections.emptyList()));
         result.setFailureItems(reqResults.getOrDefault(Result.FAILED, Collections.emptyList()));
         Stream.generate(() -> "skipDummy")
@@ -123,10 +123,10 @@ public class DynamodbEventHandler extends AbstractEventHandler<DynamodbEventEx, 
     }
 
     @Override
-    public List<AwsEventRequest> readEvent(DynamodbEventEx event) {
+    public List<AwsEventRequest> readEvent(DynamoDbEvent event) {
         return event.getRecords().stream()
-                .filter(r -> availableEventNames.contains(DynamoDBEventName.valueOf(r.getEventName())))
-                .map(r -> readDynamodbStreamRecord(r))
+                .filter(r -> availableEventNames.contains(DynamoDbEventName.valueOf(r.getEventName())))
+                .map(r -> readDynamoDbStreamRecord(r))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
@@ -138,26 +138,26 @@ public class DynamodbEventHandler extends AbstractEventHandler<DynamodbEventEx, 
                 .orElseGet(() -> list.stream());
     }
 
-    private DynamodbStreamRecordResult handleRouterRequest(AwsEventRequest request, Context context) {
+    private DynamoDbStreamRecordResult handleRouterRequest(AwsEventRequest request, Context context) {
         AwsEventResponse res = actionRouterHandle(request, context);
         if (res.isSuccessful()) {
-            return new DynamodbStreamRecordResult(Result.SUCCEEDED, request);
+            return new DynamoDbStreamRecordResult(Result.SUCCEEDED, request);
         } else {
-            return new DynamodbStreamRecordResult(Result.FAILED, request);
+            return new DynamoDbStreamRecordResult(Result.FAILED, request);
         }
     }
 
-    protected AwsEventRequest readDynamodbStreamRecord(DynamodbStreamRecord dynamodbStreamRecord) {
-        String eventId = dynamodbStreamRecord.getEventID();
-        StreamRecordEx record = dynamodbStreamRecord.getDynamodb();
-        Map<String, AttributeValueEx> newImage = record.getNewImage();
+    protected AwsEventRequest readDynamoDbStreamRecord(DynamoDbStreamRecord dynamoDbStreamRecord) {
+        String eventId = dynamoDbStreamRecord.getEventId();
+        StreamRecord record = dynamoDbStreamRecord.getDynamodb();
+        Map<String, AttributeValue> newImage = record.getNewImage();
         if (!containsRequiredKeys(newImage)) {
             logger.error("Skip record : eventID = {} missing required key", eventId);
             return null;
         }
 
-        AttributeValueEx action = newImage.get(EventConstants.DYNAMODB_ATTR_ACTION);
-        AttributeValueEx body = newImage.get(EventConstants.DYNAMODB_ATTR_REQUEST_BODY);
+        AttributeValue action = newImage.get(EventConstants.DYNAMODB_ATTR_ACTION);
+        AttributeValue body = newImage.get(EventConstants.DYNAMODB_ATTR_REQUEST_BODY);
         Map<String, String> eventAttrs;
         try {
             eventAttrs = getEventAttributes(newImage);
@@ -175,14 +175,14 @@ public class DynamodbEventHandler extends AbstractEventHandler<DynamodbEventEx, 
                     .attributes(eventAttrs);
     }
 
-    private boolean containsRequiredKeys(Map<String, AttributeValueEx> record) {
-        Optional<Map<String, AttributeValueEx>> result = Optional.of(record)
+    private boolean containsRequiredKeys(Map<String, AttributeValue> record) {
+        Optional<Map<String, AttributeValue>> result = Optional.of(record)
             .filter(r -> r.containsKey(EventConstants.DYNAMODB_ATTR_ACTION))
             .filter(r -> r.containsKey(EventConstants.DYNAMODB_ATTR_REQUEST_BODY));
         return result.isPresent();
     }
 
-    protected Map<String, String> getEventAttributes(Map<String, AttributeValueEx> image) throws IOException {
+    protected Map<String, String> getEventAttributes(Map<String, AttributeValue> image) throws IOException {
         String attrsString = image.getOrDefault(EventConstants.DYNAMODB_ATTR_EVENT_ATTRIBUTES, DEFAULT_ATTRIBUTES)
                 .getS();
         return Utils.getObjectMapper()

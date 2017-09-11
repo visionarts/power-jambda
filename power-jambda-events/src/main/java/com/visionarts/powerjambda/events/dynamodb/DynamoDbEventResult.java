@@ -23,6 +23,6 @@ import com.visionarts.powerjambda.events.Result;
  * Represents a result of processing DynamoDB events.
  *
  */
-public class DynamodbEventResult extends Result<AwsEventRequest> {
+public class DynamoDbEventResult extends Result<AwsEventRequest> {
     // nothing to do
 }

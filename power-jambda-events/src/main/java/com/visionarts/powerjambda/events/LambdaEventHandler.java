@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.visionarts.powerjambda.ApplicationContext;
-import com.visionarts.powerjambda.events.utils.IOUtils;
+import com.visionarts.powerjambda.events.utils.IoUtils;
 import com.visionarts.powerjambda.utils.Utils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -57,7 +57,7 @@ public final class LambdaEventHandler {
 
         byte[] inputBytes;
         try {
-            inputBytes = IOUtils.toByteArray(input, true);
+            inputBytes = IoUtils.toByteArray(input, true);
         } catch (IOException e) { // never happen
             throw logger.throwing(new UncheckedIOException(e));
         }

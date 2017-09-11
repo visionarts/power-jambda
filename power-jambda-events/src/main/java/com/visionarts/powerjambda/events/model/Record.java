@@ -27,23 +27,24 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Note: <br>
  *  This class is used for ourself deserialization/Unmarshal dynamodb event using jackson.
  */
-public class RecordEx {
-    private String eventID;
+public class Record {
+    @JsonProperty("eventID")
+    private String eventId;
     private String eventName;
     private String eventVersion;
     private String eventSource;
     private String awsRegion;
-    private StreamRecordEx dynamodb;
+    private StreamRecord dynamodb;
 
-    public RecordEx() {
+    public Record() {
     }
 
-    public void setEventID(String eventID) {
-        this.eventID = eventID;
+    public void setEventId(String eventId) {
+        this.eventId = eventId;
     }
 
-    public String getEventID() {
-        return this.eventID;
+    public String getEventId() {
+        return this.eventId;
     }
 
     public void setEventName(String eventName) {
@@ -78,23 +79,23 @@ public class RecordEx {
         return this.awsRegion;
     }
 
-    public void setDynamodb(StreamRecordEx dynamodb) {
+    public void setDynamodb(StreamRecord dynamodb) {
         this.dynamodb = dynamodb;
     }
 
-    public StreamRecordEx getDynamodb() {
+    public StreamRecord getDynamodb() {
         return this.dynamodb;
     }
 
-    public static class StreamRecordEx {
+    public static class StreamRecord {
         @JsonProperty("ApproximateCreationDateTime")
         private Long approximateCreationDateTime;
         @JsonProperty("Keys")
-        private Map<String, AttributeValueEx> keys;
+        private Map<String, AttributeValue> keys;
         @JsonProperty("NewImage")
-        private Map<String, AttributeValueEx> newImage;
+        private Map<String, AttributeValue> newImage;
         @JsonProperty("OldImage")
-        private Map<String, AttributeValueEx> oldImage;
+        private Map<String, AttributeValue> oldImage;
         @JsonProperty("SequenceNumber")
         private String sequenceNumber;
         @JsonProperty("SizeBytes")
@@ -102,7 +103,7 @@ public class RecordEx {
         @JsonProperty("StreamViewType")
         private String streamViewType;
 
-        public StreamRecordEx() {
+        public StreamRecord() {
         }
 
         public void setApproximateCreationDateTime(Long approximateCreationDateTime) {
@@ -113,27 +114,27 @@ public class RecordEx {
             return this.approximateCreationDateTime;
         }
 
-        public Map<String, AttributeValueEx> getKeys() {
+        public Map<String, AttributeValue> getKeys() {
             return this.keys;
         }
 
-        public void setKeys(Map<String, AttributeValueEx> keys) {
+        public void setKeys(Map<String, AttributeValue> keys) {
             this.keys = keys;
         }
 
-        public Map<String, AttributeValueEx> getNewImage() {
+        public Map<String, AttributeValue> getNewImage() {
             return this.newImage;
         }
 
-        public void setNewImage(Map<String, AttributeValueEx> newImage) {
+        public void setNewImage(Map<String, AttributeValue> newImage) {
             this.newImage = newImage;
         }
 
-        public Map<String, AttributeValueEx> getOldImage() {
+        public Map<String, AttributeValue> getOldImage() {
             return this.oldImage;
         }
 
-        public void setOldImage(Map<String, AttributeValueEx> oldImage) {
+        public void setOldImage(Map<String, AttributeValue> oldImage) {
             this.oldImage = oldImage;
         }
 

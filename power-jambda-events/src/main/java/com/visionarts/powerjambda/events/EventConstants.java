@@ -42,7 +42,7 @@ public class EventConstants {
     /**
      * The type of data modification that was performed on the DynamoDB table.
      */
-    public enum DynamoDBEventName {
+    public enum DynamoDbEventName {
         /**
          *  a new item was added to the table.
          */
@@ -62,7 +62,7 @@ public class EventConstants {
      */
     public static final String DYNAMODB_ATTR_ACTION = "Action";
     public static final String DYNAMODB_ATTR_REQUEST_BODY = "RequestBody";
-    /** Optional attribute for Dynamodb event */
+    /** Optional attribute for DynamoDB event */
     public static final String DYNAMODB_ATTR_EVENT_ATTRIBUTES = "EventAttrs";
 
 }

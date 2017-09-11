@@ -42,8 +42,8 @@ import com.visionarts.powerjambda.logging.LambdaLoggerHelper;
  * public class MyEventApplication {
  *
  *   private static final EventExecutorRegistry registry = new EventExecutorRegistry()
- *       .register(new DynamodbEventExecutor())
- *       .register(new SNSEventExecutor())
+ *       .register(new DynamoDbEventExecutor())
+ *       .register(new SnsEventExecutor())
  *       .register(new ScheduledEventExecutor());
  *
  *   public static void handler(InputStream input, OutputStream output, Context context) throws Exception {

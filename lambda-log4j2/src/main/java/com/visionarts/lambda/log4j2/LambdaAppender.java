@@ -18,6 +18,7 @@ package com.visionarts.lambda.log4j2;
 
 
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.LambdaRuntime;
@@ -64,7 +65,7 @@ public class LambdaAppender extends AbstractAppender {
     }
 
     public void append(LogEvent event) {
-        logger.log(new String(getLayout().toByteArray(event)));
+        logger.log(new String(getLayout().toByteArray(event), StandardCharsets.UTF_8));
     }
 
     @PluginFactory

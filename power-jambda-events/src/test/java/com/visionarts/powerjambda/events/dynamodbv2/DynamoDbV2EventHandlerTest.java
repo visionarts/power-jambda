@@ -34,25 +34,25 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.visionarts.powerjambda.ApplicationContext;
 import com.visionarts.powerjambda.actions.TestAction1;
 import com.visionarts.powerjambda.events.AwsEventRequest;
-import com.visionarts.powerjambda.events.EventConstants.DynamoDBEventName;
-import com.visionarts.powerjambda.events.dynamodb.DynamodbEventResult;
-import com.visionarts.powerjambda.events.model.DynamodbEventEx;
-import com.visionarts.powerjambda.events.model.DynamodbEventEx.DynamodbStreamRecord;
+import com.visionarts.powerjambda.events.EventConstants.DynamoDbEventName;
+import com.visionarts.powerjambda.events.dynamodb.DynamoDbEventResult;
+import com.visionarts.powerjambda.events.model.DynamoDbEvent;
+import com.visionarts.powerjambda.events.model.DynamoDbEvent.DynamoDbStreamRecord;
 import com.visionarts.powerjambda.testing.MockLambdaContext;
 
 
 /**
- * Test case for @{link Dynamodbv2EventHandler} class. <br>
+ * Test case for @{link DynamoDbV2EventHandler} class. <br>
  * <br>
  */
-public class Dynamodbv2EventHandlerTest {
+public class DynamoDbV2EventHandlerTest {
 
     private static final String REQUEST_JSON_TEMPLATE = "events/dynamodbv2.json";
     private static final ObjectMapper om = new ObjectMapper();
     private static final Context mockContext = new MockLambdaContext();
 
-    private Dynamodbv2EventHandler handler;
-    private Function<DynamodbStreamRecord, ?> mapper;
+    private DynamoDbV2EventHandler handler;
+    private Function<DynamoDbStreamRecord, ?> mapper;
     private InputStream input;
 
     @Rule
@@ -85,15 +85,15 @@ public class Dynamodbv2EventHandlerTest {
             model.c = Integer.valueOf(record.getDynamodb().getNewImage().get("C").getN());
             return model;
         };
-        handler = new Dynamodbv2EventHandler(new ApplicationContext(this.getClass()), 1,
+        handler = new DynamoDbV2EventHandler(new ApplicationContext(this.getClass()), 1,
                 mapper,
-                DynamoDBEventName.INSERT, DynamoDBEventName.MODIFY);
+                DynamoDbEventName.INSERT, DynamoDbEventName.MODIFY);
         input = this.getClass().getClassLoader().getResourceAsStream(REQUEST_JSON_TEMPLATE);
     }
 
     @Test
-    public void testDynamodbv2EventHandlerSuccessfully() throws Exception {
-        DynamodbEventResult result = handler.handleRequest(supplyEvent(input), mockContext);
+    public void testDynamoDbv2EventHandlerSuccessfully() throws Exception {
+        DynamoDbEventResult result = handler.handleRequest(supplyEvent(input), mockContext);
 
         assertEquals(1, result.getSuccessItems().size());
         assertEquals(0, result.getFailureItems().size());
@@ -101,17 +101,17 @@ public class Dynamodbv2EventHandlerTest {
     }
 
     @Test
-    public void testReadDynamodbStreamRecord() throws Exception {
-        AwsEventRequest req = handler.readDynamodbStreamRecord(supplyEvent(input).getRecords().get(0));
+    public void testReadDynamoDbStreamRecord() throws Exception {
+        AwsEventRequest req = handler.readDynamoDbStreamRecord(supplyEvent(input).getRecords().get(0));
 
         assertEquals(TestAction1.class.getName(), req.getAction());
         assertEquals(new TestEventBody("A", "B", 0), om.readValue(req.getBody(), TestEventBody.class));
         assertTrue(req.getAttributes().isEmpty());
     }
 
-    private DynamodbEventEx supplyEvent(InputStream input) {
+    private DynamoDbEvent supplyEvent(InputStream input) {
         try {
-            return om.readValue(input, DynamodbEventEx.class);
+            return om.readValue(input, DynamoDbEvent.class);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }

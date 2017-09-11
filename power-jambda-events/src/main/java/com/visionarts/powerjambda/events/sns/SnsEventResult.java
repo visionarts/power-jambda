@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.visionarts.powerjambda.events.dynamodb;
+package com.visionarts.powerjambda.events.sns;
 
 import com.visionarts.powerjambda.events.AwsEventRequest;
 import com.visionarts.powerjambda.events.Result;
 
 /**
- * Represents a result of processing DynamoDB events.
+ * Represents a result of processing Sns event.
  *
  */
-public class DynamodbEventResult extends Result<AwsEventRequest> {
+public class SnsEventResult extends Result<AwsEventRequest> {
     // nothing to do
 }

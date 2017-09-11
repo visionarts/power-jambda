@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.visionarts.powerjambda.events.dynamodb;
+package com.visionarts.powerjambda.events.sns;
 
 import static org.junit.Assert.*;
 
@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 
+import com.visionarts.powerjambda.events.model.SnsEvent;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -30,22 +31,25 @@ import org.junit.rules.ExpectedException;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.visionarts.powerjambda.ApplicationContext;
-import com.visionarts.powerjambda.events.model.DynamodbEventEx;
+import com.visionarts.powerjambda.actions.TestAction1;
+import com.visionarts.powerjambda.actions.models.TestAction1Body;
+import com.visionarts.powerjambda.events.model.EventActionRequest;
 import com.visionarts.powerjambda.testing.MockLambdaContext;
+
+import mockit.Expectations;
 
 
 /**
- * Test case for @{link DynamodbEventHandler} class. <br>
+ * Test case for {@link SnsEventHandler} class. <br>
  * <br>
  */
-public class DynamodbEventHandlerTest {
+public class SnsEventHandlerTest {
 
-    private static final String REQUEST_JSON_TEMPLATE = "events/dynamodb.json";
-    private static final String DYNAMO_REQUEST_MULTI_JSON_TEMPLATE = "events/dynamodb_multi_events.json";
+    private static final String SNS_REQUEST_JSON_TEMPLATE = "events/sns2.json";
     private static final ObjectMapper om = new ObjectMapper();
     private static final Context mockContext = new MockLambdaContext();
 
-    private DynamodbEventHandler handler;
+    private SnsEventHandler handler;
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -53,33 +57,32 @@ public class DynamodbEventHandlerTest {
 
     @Before
     public void setUp() throws Exception {
-        handler = new DynamodbEventHandler(new ApplicationContext(this.getClass()));
+        handler = new SnsEventHandler(new ApplicationContext(this.getClass()));
     }
 
+    @SuppressWarnings("unchecked")
     @Test
-    public void testDynamodbEventHandlerSuccessfully() throws Exception {
-        InputStream input = this.getClass().getClassLoader().getResourceAsStream(REQUEST_JSON_TEMPLATE);
-        DynamodbEventResult result = handler.handleRequest(supplyEvent(input), mockContext);
+    public void testSNSEventHandlerSuccessfully() throws Exception {
+        InputStream input = this.getClass().getClassLoader().getResourceAsStream(SNS_REQUEST_JSON_TEMPLATE);
+
+        new Expectations(TestAction1.class) {
+            {
+                new TestAction1().handle((EventActionRequest<TestAction1Body>)any, (Context)any);
+                times = 1;
+            }
+        };
+
+        SnsEventResult result = handler.handleRequest(supplyEvent(input), mockContext);
         assertEquals(1, result.getSuccessItems().size());
         assertEquals(0, result.getFailureItems().size());
         assertEquals(0, result.getSkippedItems().size());
     }
 
-    @Test()
-    public void testDynamodbEventHandlerMultiEvent() throws Exception {
-        InputStream input = this.getClass().getClassLoader().getResourceAsStream(DYNAMO_REQUEST_MULTI_JSON_TEMPLATE);
-        DynamodbEventResult result = handler.handleRequest(supplyEvent(input), mockContext);
-        assertEquals(2, result.getSuccessItems().size());
-        assertEquals(1, result.getFailureItems().size());
-        assertEquals(1, result.getSkippedItems().size());
-    }
-
-    private DynamodbEventEx supplyEvent(InputStream input) {
+    private SnsEvent supplyEvent(InputStream input) {
         try {
-            return om.readValue(input, DynamodbEventEx.class);
+            return om.readValue(input, SnsEvent.class);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
     }
-
 }

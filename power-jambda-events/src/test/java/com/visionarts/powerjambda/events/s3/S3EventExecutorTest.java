@@ -49,7 +49,7 @@ public class S3EventExecutorTest {
     private static final String S3_VIA_SNS_REQUEST_JSON_TEMPLATE = "events/s3_via_sns.json";
     private static final Context mockContext = new MockLambdaContext();
 
-    private S3EventViaSNSExecutor executor;
+    private S3EventViaSnsExecutor executor;
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -57,7 +57,7 @@ public class S3EventExecutorTest {
 
     @Before
     public void setUp() throws Exception {
-        executor = new S3EventViaSNSExecutor(S3EventAction.class);
+        executor = new S3EventViaSnsExecutor(S3EventAction.class);
         executor.setApplicationContext(new ApplicationContext(this.getClass()));
     }
 

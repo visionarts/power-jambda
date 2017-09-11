@@ -50,8 +50,8 @@ public class ScheduledEventHandler extends AbstractEventHandler<ScheduledEvent, 
     @Override
     public AwsEventRequest readEvent(ScheduledEvent event) {
         return new AwsEventRequest()
-                    .action(event.detail.get("action").asText())
-                    .body(event.detail.get("body").asText());
+                    .action(event.getDetail().get("action").asText())
+                    .body(event.getDetail().get("body").asText());
     }
 
 }

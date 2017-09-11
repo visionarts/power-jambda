@@ -31,14 +31,14 @@ import org.apache.logging.log4j.ThreadContext;
 public class ScheduledEventExecutor extends AbstractEventExecutor<ScheduledEvent, ScheduledEventResult> {
 
     private static final Predicate<ScheduledEvent> SCHEDULED_EVENT_CONDITION = e ->
-        EventConstants.EVENT_SOURCE_SCHEDULED_EVENTS.equals(e.source) &&
-            EventConstants.DETAIL_TYPE_SCHEDULED_EVENT.equals(e.detailType);
+        EventConstants.EVENT_SOURCE_SCHEDULED_EVENTS.equals(e.getSource()) &&
+            EventConstants.DETAIL_TYPE_SCHEDULED_EVENT.equals(e.getDetailType());
 
     @Override
     public Optional<ScheduledEvent> resolve(final byte[] input) {
         Optional<ScheduledEvent> event;
         try {
-            event = EventDeserializeUtils.resolveAWSEvent(
+            event = EventDeserializeUtils.resolveAwsEvent(
                         input, ScheduledEvent.class, SCHEDULED_EVENT_CONDITION);
             event.ifPresent(e -> {
                 ThreadContext.put(EventConstants.LOG_THREAD_CONTEXT_EVENT_KEY,

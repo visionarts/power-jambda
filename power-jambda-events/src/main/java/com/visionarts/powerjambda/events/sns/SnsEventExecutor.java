@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.visionarts.powerjambda.events.dynamodb;
+package com.visionarts.powerjambda.events.sns;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -25,48 +25,37 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.visionarts.powerjambda.events.AbstractEventExecutor;
 import com.visionarts.powerjambda.events.EventConstants;
 import com.visionarts.powerjambda.events.internal.EventDeserializeUtils;
-import com.visionarts.powerjambda.events.model.DynamodbEventEx;
+import com.visionarts.powerjambda.events.model.SnsEvent;
 import com.visionarts.powerjambda.utils.FunctionalUtils;
 import org.apache.logging.log4j.ThreadContext;
 
-public class DynamodbEventExecutor extends AbstractEventExecutor<DynamodbEventEx, DynamodbEventResult> {
+public class SnsEventExecutor extends AbstractEventExecutor<SnsEvent, SnsEventResult> {
 
-    private static final Predicate<DynamodbEventEx> DYNAMODB_EVENT_CONDITION = e ->
+    public static final Predicate<SnsEvent> SNS_EVENT_CONDITION = e ->
         FunctionalUtils.isNotEmpty(e.getRecords()) &&
-            EventConstants.EVENT_SOURCE_DYNAMODB.equals(e.getRecords().get(0).getEventSource());
-
-    private final Supplier<RequestHandler<DynamodbEventEx, DynamodbEventResult>> supplier;
-
-    public DynamodbEventExecutor() {
-        supplier = () -> new DynamodbEventHandler(getApplicationContext());
-    }
-
-    public DynamodbEventExecutor(int parallelStreamSize, EventConstants.DynamoDBEventName... availableEventTypes) {
-        supplier = () ->
-            new DynamodbEventHandler(getApplicationContext(), parallelStreamSize, availableEventTypes);
-    }
+            EventConstants.EVENT_SOURCE_SNS.equals(e.getRecords().get(0).getEventSource());
 
     @Override
-    public Optional<DynamodbEventEx> resolve(final byte[] input) {
-        Optional<DynamodbEventEx> event;
+    public Optional<SnsEvent> resolve(final byte[] input) {
+        Optional<SnsEvent> event;
         try {
-            event = EventDeserializeUtils.resolveAWSEvent(
-                        input, DynamodbEventEx.class, DYNAMODB_EVENT_CONDITION);
+            event = EventDeserializeUtils.resolveAwsEvent(
+                        input, SnsEvent.class, SNS_EVENT_CONDITION);
             event.ifPresent(e -> {
                 ThreadContext.put(EventConstants.LOG_THREAD_CONTEXT_EVENT_KEY,
-                        EventConstants.EVENT_SOURCE_DYNAMODB);
-                logger.info("Deserialize current input to DynamodbEventEx instance successfully");
+                        EventConstants.EVENT_SOURCE_SNS);
+                logger.info("Deserialize current input to SnsEvent instance successfully");
             });
         } catch (IOException e) {
             // fall through
             event = Optional.empty();
-            logger.error("Can not deserialize DynamodbEventEx", e);
+            logger.error("Can not deserialize SnsEvent", e);
         }
         return event;
     }
 
     @Override
-    public Supplier<RequestHandler<DynamodbEventEx, DynamodbEventResult>> getEventHandler() {
-        return supplier;
+    public Supplier<RequestHandler<SnsEvent, SnsEventResult>> getEventHandler() {
+        return () -> new SnsEventHandler(getApplicationContext());
     }
 }

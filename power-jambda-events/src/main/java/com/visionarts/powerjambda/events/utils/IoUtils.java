@@ -21,10 +21,10 @@ import java.io.InputStream;
 
 import com.google.common.io.ByteStreams;
 
-public class IOUtils {
+public class IoUtils {
 
     // Suppresses default constructor, ensuring non-instantiability.
-    private IOUtils() {
+    private IoUtils() {
         // nothing to do here
     }
 

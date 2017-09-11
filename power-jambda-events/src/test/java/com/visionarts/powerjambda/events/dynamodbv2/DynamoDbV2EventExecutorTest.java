@@ -34,22 +34,22 @@ import org.junit.rules.ExpectedException;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.util.IOUtils;
 import com.visionarts.powerjambda.ApplicationContext;
-import com.visionarts.powerjambda.events.EventConstants.DynamoDBEventName;
-import com.visionarts.powerjambda.events.dynamodb.DynamodbEventResult;
-import com.visionarts.powerjambda.events.model.DynamodbEventEx.DynamodbStreamRecord;
+import com.visionarts.powerjambda.events.EventConstants.DynamoDbEventName;
+import com.visionarts.powerjambda.events.dynamodb.DynamoDbEventResult;
+import com.visionarts.powerjambda.events.model.DynamoDbEvent.DynamoDbStreamRecord;
 import com.visionarts.powerjambda.testing.MockLambdaContext;
 
 
 /**
- * Test case for @{link Dynamodbv2EventHandler} class. <br>
+ * Test case for @{link DynamoDbV2EventHandler} class. <br>
  * <br>
  */
-public class Dynamodbv2EventExecutorTest {
+public class DynamoDbV2EventExecutorTest {
 
     private static final String REQUEST_JSON_TEMPLATE = "events/dynamodbv2.json";
     private static final Context mockContext = new MockLambdaContext();
 
-    private Dynamodbv2EventExecutor executor;
+    private DynamoDbV2EventExecutor executor;
     private InputStream input;
 
     @Rule
@@ -75,7 +75,7 @@ public class Dynamodbv2EventExecutorTest {
 
     @Before
     public void setUp() throws Exception {
-        Function<DynamodbStreamRecord, ?> mapper =
+        Function<DynamoDbStreamRecord, ?> mapper =
                 record -> {
                     TestEventBody model = new TestEventBody();
                     model.a = record.getDynamodb().getNewImage().get("A").getS();
@@ -83,14 +83,14 @@ public class Dynamodbv2EventExecutorTest {
                     model.c = Integer.valueOf(record.getDynamodb().getNewImage().get("C").getN());
                     return model;
                 };
-        executor = new Dynamodbv2EventExecutor(1, mapper, DynamoDBEventName.INSERT);
+        executor = new DynamoDbV2EventExecutor(1, mapper, DynamoDbEventName.INSERT);
         executor.setApplicationContext(new ApplicationContext(this.getClass()));
         input = this.getClass().getClassLoader().getResourceAsStream(REQUEST_JSON_TEMPLATE);
     }
 
     @Test
     public void testDynamodbv2EventExecutorSuccessfully() throws Exception {
-        Optional<DynamodbEventResult> result = executor.apply(readJson(input), mockContext);
+        Optional<DynamoDbEventResult> result = executor.apply(readJson(input), mockContext);
 
         assertEquals(1, result.get().getSuccessItems().size());
         assertEquals(0, result.get().getFailureItems().size());

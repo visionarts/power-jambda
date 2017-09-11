@@ -34,7 +34,7 @@ import com.visionarts.powerjambda.testing.MockLambdaContext;
 
 
 /**
- * Test case for DynamodbEventHandler class. <br>
+ * Test case for DynamoDbEventHandler class. <br>
  * <br>
  */
 public class EventApplicationTest {

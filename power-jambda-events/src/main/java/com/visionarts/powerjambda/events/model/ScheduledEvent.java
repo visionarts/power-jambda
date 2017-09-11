@@ -27,10 +27,32 @@ import com.fasterxml.jackson.databind.JsonNode;
  */
 public class ScheduledEvent {
 
-    public String source;
-
+    private String source;
     @JsonProperty("detail-type")
-    public String detailType;
+    private String detailType;
+    private JsonNode detail;
 
-    public JsonNode detail;
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public String getDetailType() {
+        return detailType;
+    }
+
+    public void setDetailType(String detailType) {
+        this.detailType = detailType;
+    }
+
+    public JsonNode getDetail() {
+        return detail;
+    }
+
+    public void setDetail(JsonNode detail) {
+        this.detail = detail;
+    }
 }

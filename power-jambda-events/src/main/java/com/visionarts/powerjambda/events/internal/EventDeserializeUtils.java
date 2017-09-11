@@ -43,8 +43,8 @@ public class EventDeserializeUtils {
         // nothing to do here
     }
 
-    public static <T> Optional<T> resolveAWSEvent(final byte[] input, Class<T> eventClazz,
-            Predicate<T> eventCondition) throws IOException {
+    public static <T> Optional<T> resolveAwsEvent(final byte[] input, Class<T> eventClazz,
+                                                  Predicate<T> eventCondition) throws IOException {
         return resolveEvent(input, eventClazz, eventCondition, AWS_EVENT_MAPPER);
     }
 

@@ -31,7 +31,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Note: <br>
  *  This class is used for ourself deserialization/Unmarshal dynamodb event using jackson.
  */
-public class AttributeValueEx {
+public class AttributeValue {
     @JsonProperty("S")
     private String s;
     @JsonProperty("N")
@@ -45,23 +45,23 @@ public class AttributeValueEx {
     @JsonProperty("BS")
     private List<ByteBuffer> bS;
     @JsonProperty("M")
-    private Map<String, AttributeValueEx> m;
+    private Map<String, AttributeValue> m;
     @JsonProperty("L")
-    private List<AttributeValueEx> l;
+    private List<AttributeValue> l;
     @JsonProperty("NULL")
-    private Boolean nULLValue;
+    private Boolean nullValue;
     @JsonProperty("BOOL")
-    private Boolean bOOL;
+    private Boolean bool;
 
-    public AttributeValueEx() {
+    public AttributeValue() {
     }
 
-    public AttributeValueEx(String s) {
+    public AttributeValue(String s) {
         setS(s);
     }
 
-    public AttributeValueEx(List<String> sS) {
-        setSS(sS);
+    public AttributeValue(List<String> sS) {
+        setSs(sS);
     }
 
     public void setS(String s) {
@@ -88,11 +88,11 @@ public class AttributeValueEx {
         return this.b;
     }
 
-    public List<String> getSS() {
+    public List<String> getSs() {
         return this.sS;
     }
 
-    public void setSS(Collection<String> sS) {
+    public void setSs(Collection<String> sS) {
         if (sS == null) {
             this.sS = null;
             return;
@@ -100,11 +100,11 @@ public class AttributeValueEx {
         this.sS = new ArrayList<>(sS);
     }
 
-    public List<String> getNS() {
+    public List<String> getNs() {
         return this.nS;
     }
 
-    public void setNS(Collection<String> nS) {
+    public void setNs(Collection<String> nS) {
         if (nS == null) {
             this.nS = null;
             return;
@@ -112,11 +112,11 @@ public class AttributeValueEx {
         this.nS = new ArrayList<>(nS);
     }
 
-    public List<ByteBuffer> getBS() {
+    public List<ByteBuffer> getBs() {
         return this.bS;
     }
 
-    public void setBS(Collection<ByteBuffer> bS) {
+    public void setBs(Collection<ByteBuffer> bS) {
         if (bS == null) {
             this.bS = null;
             return;
@@ -124,19 +124,19 @@ public class AttributeValueEx {
         this.bS = new ArrayList<>(bS);
     }
 
-    public Map<String, AttributeValueEx> getM() {
+    public Map<String, AttributeValue> getM() {
         return this.m;
     }
 
-    public void setM(Map<String, AttributeValueEx> m) {
+    public void setM(Map<String, AttributeValue> m) {
         this.m = m;
     }
 
-    public List<AttributeValueEx> getL() {
+    public List<AttributeValue> getL() {
         return this.l;
     }
 
-    public void setL(Collection<AttributeValueEx> l) {
+    public void setL(Collection<AttributeValue> l) {
         if (l == null) {
             this.l = null;
             return;
@@ -144,27 +144,27 @@ public class AttributeValueEx {
         this.l = new ArrayList<>(l);
     }
 
-    public void setNULL(Boolean nULLValue) {
-        this.nULLValue = nULLValue;
+    public void setNull(Boolean nullValue) {
+        this.nullValue = nullValue;
     }
 
-    public Boolean getNULL() {
-        return this.nULLValue;
+    public Boolean getNull() {
+        return this.nullValue;
     }
 
-    public Boolean isNULL() {
-        return this.nULLValue;
+    public Boolean isNull() {
+        return this.nullValue;
     }
 
-    public void setBOOL(Boolean bOOL) {
-        this.bOOL = bOOL;
+    public void setBool(Boolean bool) {
+        this.bool = bool;
     }
 
-    public Boolean getBOOL() {
-        return this.bOOL;
+    public Boolean getBool() {
+        return this.bool;
     }
 
-    public Boolean isBOOL() {
-        return this.bOOL;
+    public Boolean isBool() {
+        return this.bool;
     }
 }

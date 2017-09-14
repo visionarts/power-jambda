@@ -27,6 +27,7 @@ import com.visionarts.powerjambda.events.JsonBodyEventActionRequestReader;
 import com.visionarts.powerjambda.events.model.EventActionRequest;
 import com.visionarts.powerjambda.exceptions.DefaultActionExceptionResolver;
 import com.visionarts.powerjambda.exceptions.InternalErrorException;
+import com.visionarts.powerjambda.utils.FunctionalUtils;
 
 /**
  * This abstract class implementing the LambdaAction interface.
@@ -78,8 +79,8 @@ public abstract class AbstractEventAction<T>
 
     @Override
     protected final void beforeHandle(EventActionRequest<T> request, Context context) throws Exception {
-        logger.info("START {} with {}",
-            () -> this.getClass().getName(), () -> maskableJson(request.getBody()));
+        FunctionalUtils.toBiConsumer(loggerBeforeHandle(), logger)
+                .accept(request, context);
         beforeAction(request, context);
     }
 
@@ -88,7 +89,8 @@ public abstract class AbstractEventAction<T>
         try {
             afterAction(request, context);
         } finally {
-            logger.info("END {}", this.getClass().getName());
+            FunctionalUtils.toBiConsumer(loggerAfterHandle(), logger)
+                    .accept(request, context);
         }
     }
 
@@ -100,5 +102,17 @@ public abstract class AbstractEventAction<T>
     @Override
     protected ResponseWriter<AwsEventResponse, AwsEventResponse> responseWriter(AwsEventRequest request, Context context) {
         return new DummyResponseWriter<>();
+    }
+
+    @Override
+    protected FunctionalUtils.UnsafeBiConsumer<EventActionRequest<T>, Context> loggerBeforeHandle() {
+        return (r, c) ->
+                logger.info("START {} with {}",
+                    () -> this.getClass().getName(), () -> maskableJson(r.getBody()));
+    }
+
+    @Override
+    protected FunctionalUtils.UnsafeBiConsumer<EventActionRequest<T>, Context> loggerAfterHandle() {
+        return (r, c) -> logger.info("END {}", this.getClass().getName());
     }
 }

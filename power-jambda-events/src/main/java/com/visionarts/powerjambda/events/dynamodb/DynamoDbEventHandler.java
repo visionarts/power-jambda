@@ -18,6 +18,7 @@ package com.visionarts.powerjambda.events.dynamodb;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -134,8 +135,8 @@ public class DynamoDbEventHandler extends AbstractEventHandler<DynamoDbEvent, Dy
     private <E> Stream<E> streamIfAvailableParallel(List<E> list) {
         return Optional.of(list)
                 .filter(l -> l.size() > parallelStreamSize)
-                .map(l -> l.parallelStream())
-                .orElseGet(() -> list.stream());
+                .map(Collection::parallelStream)
+                .orElseGet(list::stream);
     }
 
     private DynamoDbStreamRecordResult handleRouterRequest(AwsEventRequest request, Context context) {

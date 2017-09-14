@@ -18,7 +18,11 @@ package com.visionarts.powerjambda.utils;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
+
+import org.apache.logging.log4j.Logger;
 
 /**
  * Provides utility methods for Functional interfaces. <br>
@@ -104,5 +108,57 @@ public class FunctionalUtils {
     public static <T> Predicate<T> not(Predicate<T> predicate) {
         Objects.requireNonNull(predicate);
         return predicate.negate();
+    }
+
+    /**
+     * A wrapper around a Consumer that throws a checked exception.
+     *
+     * @param unsafeConsumer Something that acts like a consumer but may throw an exception
+     * @param logger Logger that used to log if an exception thrown
+     * @return A consumer that is wrapped in a try-catch converting the checked exception into a runtime exception
+     */
+    public static <T> Consumer<T> toConsumer(UnsafeConsumer<T> unsafeConsumer, Logger logger) {
+        return t -> {
+            try {
+                unsafeConsumer.accept(t);
+            } catch (Exception e) {
+                throw logger.throwing(new RuntimeException(e));
+            }
+        };
+    }
+
+    /**
+     * A wrapper around a Consumer that throws a checked exception.
+     *
+     * @param unsafeBiConsumer Something that acts like a consumer but may throw an exception
+     * @param logger Logger that used to log if an exception thrown
+     * @return A consumer that is wrapped in a try-catch converting the checked exception into a runtime exception
+     */
+    public static <T, U> BiConsumer<T, U> toBiConsumer(UnsafeBiConsumer<T, U> unsafeBiConsumer, Logger logger) {
+        return (t, u) -> {
+            try {
+                unsafeBiConsumer.accept(t, u);
+            } catch (Exception e) {
+                throw logger.throwing(new RuntimeException(e));
+            }
+        };
+    }
+
+    /**
+     * Equivalent of {@link Consumer} that may throw a checked exception.
+     *
+     */
+    @FunctionalInterface
+    public interface UnsafeConsumer<T> {
+        void accept(T t) throws Exception;
+    }
+
+    /**
+     * Equivalent of {@link BiConsumer} that may throw a checked exception.
+     *
+     */
+    @FunctionalInterface
+    public interface UnsafeBiConsumer<T, U> {
+        void accept(T t, U u) throws Exception;
     }
 }

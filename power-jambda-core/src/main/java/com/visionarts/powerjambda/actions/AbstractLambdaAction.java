@@ -29,6 +29,7 @@ import com.visionarts.powerjambda.filters.CorsFilter;
 import com.visionarts.powerjambda.filters.FilterChain;
 import com.visionarts.powerjambda.models.ActionRequest;
 import com.visionarts.powerjambda.utils.FunctionalUtils;
+import com.visionarts.powerjambda.utils.FunctionalUtils.UnsafeBiConsumer;
 
 public abstract class AbstractLambdaAction<T, ActionResultT>
         extends LambdaBaseAction<AwsProxyRequest, AwsProxyResponse, ActionRequest<T>, ActionResultT> {
@@ -100,14 +101,14 @@ public abstract class AbstractLambdaAction<T, ActionResultT>
     }
 
     @Override
-    protected FunctionalUtils.UnsafeBiConsumer<ActionRequest<T>, Context> loggerBeforeHandle() {
+    protected UnsafeBiConsumer<ActionRequest<T>, Context> loggerBeforeHandle() {
         return (r, c) ->
                 logger.info("START {} with {}",
                     () -> this.getClass().getName(), () -> maskableJson(r.getBody()));
     }
 
     @Override
-    protected FunctionalUtils.UnsafeBiConsumer<ActionRequest<T>, Context> loggerAfterHandle() {
+    protected UnsafeBiConsumer<ActionRequest<T>, Context> loggerAfterHandle() {
         return (r, c) -> logger.info("END {}", this.getClass().getName());
     }
 

@@ -27,7 +27,7 @@ import com.visionarts.powerjambda.RequestReader;
 import com.visionarts.powerjambda.ResponseWriter;
 import com.visionarts.powerjambda.exceptions.ClientErrorException;
 import com.visionarts.powerjambda.exceptions.InternalErrorException;
-import com.visionarts.powerjambda.utils.FunctionalUtils;
+import com.visionarts.powerjambda.utils.FunctionalUtils.UnsafeBiConsumer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -147,12 +147,12 @@ public abstract class LambdaBaseAction<RequestT, ResponseT, ActionRequestT, Acti
      *
      * @return A logger that logs a message
      */
-    protected abstract FunctionalUtils.UnsafeBiConsumer<ActionRequestT, Context> loggerBeforeHandle();
+    protected abstract UnsafeBiConsumer<ActionRequestT, Context> loggerBeforeHandle();
 
     /**
      * Returns a logger that logs a message after an 'action' invocation.
      *
      * @return A logger that logs a message
      */
-    protected abstract FunctionalUtils.UnsafeBiConsumer<ActionRequestT, Context> loggerAfterHandle();
+    protected abstract UnsafeBiConsumer<ActionRequestT, Context> loggerAfterHandle();
 }

@@ -70,10 +70,21 @@ $ aws cloudformation describe-stacks --stack-name <YOUR STACK NAME>
 
 ```
 
-## Test
+## Run
 Copy the `OutputValue` into `API URL` in the following `curl` command to test a request.
 ```
-$ curl -X POST -d '{"name":"Bob","message":"Hello"}' <API URL>/echo
-{"name":"Bob","message":"Hello"}
+curl -i -X POST -d '{"name":"Bob","message":"Hello"}' <API URL>/echo
+HTTP/1.1 200 OK
+Content-Type: application/json
+Content-Length: 32
+Connection: keep-alive
+Date: Thu, 20 Sep 2017 06:33:06 GMT
+x-amzn-RequestId: e1cb4424-a416-11e7-bbce-b186d7a68ea7
+Access-Control-Allow-Origin: *
+X-Amzn-Trace-Id: sampled=0;root=1-59cc97a0-c5844e6e669804c49d80e9fe
+X-Cache: Miss from cloudfront
+Via: 1.1 xxxx.cloudfront.net (CloudFront)
+X-Amz-Cf-Id: xxxx
 
+{"name":"Bob","message":"Hello"}
 ```

@@ -31,6 +31,12 @@ import com.visionarts.powerjambda.models.ActionRequest;
 import com.visionarts.powerjambda.utils.FunctionalUtils;
 import com.visionarts.powerjambda.utils.FunctionalUtils.UnsafeBiConsumer;
 
+/**
+ * Abstract class for all action for RESTful API.<br>
+ *
+ * @param <T> The type of request body
+ * @param <ActionResultT> The type of action result to return the response
+ */
 public abstract class AbstractLambdaAction<T, ActionResultT>
         extends LambdaBaseAction<AwsProxyRequest, AwsProxyResponse, ActionRequest<T>, ActionResultT> {
 

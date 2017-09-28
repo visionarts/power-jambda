@@ -31,7 +31,6 @@ import com.visionarts.powerjambda.events.dynamodb.DynamoDbEventHandler;
 import com.visionarts.powerjambda.events.model.AttributeValue;
 import com.visionarts.powerjambda.events.model.DynamoDbEvent.DynamoDbStreamRecord;
 import com.visionarts.powerjambda.events.model.EventActionRequest;
-import com.visionarts.powerjambda.events.model.Record.StreamRecord;
 import com.visionarts.powerjambda.utils.Utils;
 
 
@@ -64,16 +63,27 @@ public class DynamoDbV2EventHandler extends DynamoDbEventHandler {
     }
 
     @Override
-    protected AwsEventRequest readDynamoDbStreamRecord(DynamoDbStreamRecord dynamoDbStreamRecord) {
+    protected boolean canHandleRecord(DynamoDbStreamRecord dynamoDbStreamRecord) {
         String eventId = dynamoDbStreamRecord.getEventId();
-        StreamRecord record = dynamoDbStreamRecord.getDynamodb();
-        Map<String, AttributeValue> newImage = record.getNewImage();
-        if (!containsRequiredKeys(newImage)) {
-            logger.error("Skip record : eventID = {} missing required key", eventId);
-            return null;
+        Optional<Map<String, AttributeValue>> image = preferableImage(dynamoDbStreamRecord.getDynamodb());
+        if (!image.isPresent()) {
+            logger.error("Skip record : eventID = {} not found target image in {}",
+                    eventId, dynamoDbStreamRecord.getDynamodb().getStreamViewType());
+            return false;
         }
+        if (!containsRequiredAttributes(image.get())) {
+            logger.error("Skip record : eventID = {} missing required key", eventId);
+            return false;
+        }
+        return true;
+    }
 
-        AttributeValue action = newImage.get(EventConstants.DYNAMODB_ATTR_ACTION);
+    @Override
+    protected AwsEventRequest buildAwsEventRequest(DynamoDbStreamRecord dynamoDbStreamRecord) {
+        String eventId = dynamoDbStreamRecord.getEventId();
+        Map<String, AttributeValue> image = preferableImage(dynamoDbStreamRecord.getDynamodb())
+                .orElseThrow(() -> new RuntimeException("Unexpected error"));
+        AttributeValue action = image.get(EventConstants.DYNAMODB_ATTR_ACTION);
         String body;
         try {
             body = Utils.getObjectMapper().writeValueAsString(requestBodyMapper.apply(dynamoDbStreamRecord));
@@ -84,11 +94,11 @@ public class DynamoDbV2EventHandler extends DynamoDbEventHandler {
         }
         Map<String, String> eventAttrs;
         try {
-            eventAttrs = getEventAttributes(newImage);
+            eventAttrs = getEventAttributes(image);
         } catch (IOException e) {
             logger.error("Skip record : eventID = {} failed to deserialize JSON content {} in {}, msg = {}",
                     eventId,
-                    newImage.get(EventConstants.DYNAMODB_ATTR_EVENT_ATTRIBUTES).getS(),
+                    image.get(EventConstants.DYNAMODB_ATTR_EVENT_ATTRIBUTES).getS(),
                     EventConstants.DYNAMODB_ATTR_EVENT_ATTRIBUTES,
                     e.getMessage());
             return null;
@@ -99,7 +109,7 @@ public class DynamoDbV2EventHandler extends DynamoDbEventHandler {
                     .attributes(eventAttrs);
     }
 
-    private boolean containsRequiredKeys(Map<String, AttributeValue> record) {
+    private boolean containsRequiredAttributes(Map<String, AttributeValue> record) {
         Optional<Map<String, AttributeValue>> result = Optional.of(record)
             .filter(r -> r.containsKey(EventConstants.DYNAMODB_ATTR_ACTION));
         return result.isPresent();

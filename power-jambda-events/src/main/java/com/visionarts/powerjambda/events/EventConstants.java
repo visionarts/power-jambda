@@ -58,6 +58,30 @@ public class EventConstants {
     }
 
     /**
+     * When an item in the table is modified, <code>DynamoDbStreamViewType</code> determines
+     * what information is written to the stream for this table.
+     *
+     */
+    public enum DynamoDbStreamViewType {
+        /**
+         * Only the key attributes of the modified item are written to the stream.
+         */
+        KEYS_ONLY,
+        /**
+         * The entire new item, as it appears after it was modified, is written to the stream.
+         */
+        NEW_IMAGE,
+        /**
+         * The entire old item, as it appeared before it was modified, is written to the stream.
+         */
+        OLD_IMAGE,
+        /**
+         * Both the new and the old item images of the item are written to the stream.
+         */
+        NEW_AND_OLD_IMAGES,
+    }
+
+    /**
      * DynamoDB Event table required attributes
      */
     public static final String DYNAMODB_ATTR_ACTION = "Action";

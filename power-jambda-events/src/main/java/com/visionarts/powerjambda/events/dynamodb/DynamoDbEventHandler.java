@@ -36,10 +36,12 @@ import com.visionarts.powerjambda.events.AwsEventRequest;
 import com.visionarts.powerjambda.events.AwsEventResponse;
 import com.visionarts.powerjambda.events.EventConstants;
 import com.visionarts.powerjambda.events.EventConstants.DynamoDbEventName;
+import com.visionarts.powerjambda.events.EventConstants.DynamoDbStreamViewType;
 import com.visionarts.powerjambda.events.model.AttributeValue;
 import com.visionarts.powerjambda.events.model.DynamoDbEvent;
 import com.visionarts.powerjambda.events.model.DynamoDbEvent.DynamoDbStreamRecord;
 import com.visionarts.powerjambda.events.model.Record.StreamRecord;
+import com.visionarts.powerjambda.utils.OptionalUtils;
 import com.visionarts.powerjambda.utils.Utils;
 
 
@@ -149,23 +151,39 @@ public class DynamoDbEventHandler extends AbstractEventHandler<DynamoDbEvent, Dy
     }
 
     protected AwsEventRequest readDynamoDbStreamRecord(DynamoDbStreamRecord dynamoDbStreamRecord) {
-        String eventId = dynamoDbStreamRecord.getEventId();
-        StreamRecord record = dynamoDbStreamRecord.getDynamodb();
-        Map<String, AttributeValue> newImage = record.getNewImage();
-        if (!containsRequiredKeys(newImage)) {
-            logger.error("Skip record : eventID = {} missing required key", eventId);
-            return null;
-        }
+        return Optional.of(dynamoDbStreamRecord)
+                .filter(this::canHandleRecord)
+                .map(this::buildAwsEventRequest)
+                .orElse(null);
+    }
 
-        AttributeValue action = newImage.get(EventConstants.DYNAMODB_ATTR_ACTION);
-        AttributeValue body = newImage.get(EventConstants.DYNAMODB_ATTR_REQUEST_BODY);
+    protected boolean canHandleRecord(DynamoDbStreamRecord dynamoDbStreamRecord) {
+        String eventId = dynamoDbStreamRecord.getEventId();
+        Optional<Map<String, AttributeValue>> image = preferableImage(dynamoDbStreamRecord.getDynamodb());
+        if (!image.isPresent()) {
+            logger.error("Skip record : eventID = {} not found target image in {}",
+                    eventId, dynamoDbStreamRecord.getDynamodb().getStreamViewType());
+            return false;
+        }
+        if (!containsRequiredAttributes(image.get())) {
+            logger.error("Skip record : eventID = {} missing required key", eventId);
+            return false;
+        }
+        return true;
+    }
+
+    protected AwsEventRequest buildAwsEventRequest(DynamoDbStreamRecord dynamoDbStreamRecord) {
+        Map<String, AttributeValue> image = preferableImage(dynamoDbStreamRecord.getDynamodb())
+                .orElseThrow(() -> new RuntimeException("Unexpected error"));
+        AttributeValue action = image.get(EventConstants.DYNAMODB_ATTR_ACTION);
+        AttributeValue body = image.get(EventConstants.DYNAMODB_ATTR_REQUEST_BODY);
         Map<String, String> eventAttrs;
         try {
-            eventAttrs = getEventAttributes(newImage);
+            eventAttrs = getEventAttributes(image);
         } catch (IOException e) {
             logger.error("Skip record : eventID = {} failed to deserialize JSON content {} in {}, msg = {}",
-                    eventId,
-                    newImage.get(EventConstants.DYNAMODB_ATTR_EVENT_ATTRIBUTES).getS(),
+                    dynamoDbStreamRecord.getEventId(),
+                    image.get(EventConstants.DYNAMODB_ATTR_EVENT_ATTRIBUTES).getS(),
                     EventConstants.DYNAMODB_ATTR_EVENT_ATTRIBUTES,
                     e.getMessage());
             return null;
@@ -176,7 +194,7 @@ public class DynamoDbEventHandler extends AbstractEventHandler<DynamoDbEvent, Dy
                     .attributes(eventAttrs);
     }
 
-    private boolean containsRequiredKeys(Map<String, AttributeValue> record) {
+    private boolean containsRequiredAttributes(Map<String, AttributeValue> record) {
         Optional<Map<String, AttributeValue>> result = Optional.of(record)
             .filter(r -> r.containsKey(EventConstants.DYNAMODB_ATTR_ACTION))
             .filter(r -> r.containsKey(EventConstants.DYNAMODB_ATTR_REQUEST_BODY));
@@ -191,6 +209,28 @@ public class DynamoDbEventHandler extends AbstractEventHandler<DynamoDbEvent, Dy
                     // nothing to do
                     }
                 );
+    }
+
+    /**
+     * Returns a preferable image object from a stream record.
+     *
+     * @param streamRecord A stream record to extract
+     * @return An image
+     */
+    protected Optional<Map<String, AttributeValue>> preferableImage(StreamRecord streamRecord) {
+        DynamoDbStreamViewType streamViewType = DynamoDbStreamViewType.valueOf(streamRecord.getStreamViewType());
+        switch (streamViewType) {
+            case NEW_IMAGE:
+                return Optional.ofNullable(streamRecord.getNewImage());
+            case NEW_AND_OLD_IMAGES:
+                return OptionalUtils.or(Optional.ofNullable(streamRecord.getNewImage()),
+                    () -> Optional.of(streamRecord.getOldImage()));
+            case OLD_IMAGE:
+                return Optional.ofNullable(streamRecord.getOldImage());
+            case KEYS_ONLY:
+            default:
+                return Optional.empty();
+        }
     }
 
 }

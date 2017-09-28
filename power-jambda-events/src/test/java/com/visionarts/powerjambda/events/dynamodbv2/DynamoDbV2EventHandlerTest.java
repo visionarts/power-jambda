@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.util.function.Function;
 
+import mockit.Deencapsulation;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.junit.Before;
 import org.junit.Rule;
@@ -102,7 +103,7 @@ public class DynamoDbV2EventHandlerTest {
 
     @Test
     public void testReadDynamoDbStreamRecord() throws Exception {
-        AwsEventRequest req = handler.readDynamoDbStreamRecord(supplyEvent(input).getRecords().get(0));
+        AwsEventRequest req = Deencapsulation.invoke(handler, "readDynamoDbStreamRecord", supplyEvent(input).getRecords().get(0));
 
         assertEquals(TestAction1.class.getName(), req.getAction());
         assertEquals(new TestEventBody("A", "B", 0), om.readValue(req.getBody(), TestEventBody.class));

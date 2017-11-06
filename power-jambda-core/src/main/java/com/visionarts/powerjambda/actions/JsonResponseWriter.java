@@ -18,11 +18,10 @@ package com.visionarts.powerjambda.actions;
 
 import java.util.Collections;
 
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.net.HttpHeaders;
+import com.google.common.net.MediaType;
 import com.visionarts.powerjambda.AwsProxyResponse;
 import com.visionarts.powerjambda.ResponseWriter;
 import com.visionarts.powerjambda.models.ResponseEntity;
@@ -36,13 +35,13 @@ public class JsonResponseWriter<T> extends ResponseWriter<T, AwsProxyResponse> {
     protected AwsProxyResponse writeEntity(T value) throws JsonProcessingException {
         return new AwsProxyResponse(200, Collections.emptyMap(),
                         om.writeValueAsString(value))
-                    .addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
+                    .addHeader(HttpHeaders.CONTENT_TYPE, MediaType.JSON_UTF_8.withoutParameters().toString());
     }
 
     @Override
     protected AwsProxyResponse writeEntity(ResponseEntity<T> value) throws JsonProcessingException {
         return new AwsProxyResponse(value.getStatusCode(), value.getHeaders(),
                         om.writeValueAsString(value.getBody()))
-                    .addHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
+                    .addHeader(HttpHeaders.CONTENT_TYPE, MediaType.JSON_UTF_8.withoutParameters().toString());
     }
 }

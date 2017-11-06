@@ -20,12 +20,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-
 import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.net.HttpHeaders;
+import com.google.common.net.MediaType;
 import com.visionarts.powerjambda.AwsProxyResponse;
 import com.visionarts.powerjambda.GlobalExceptionHandler;
 import com.visionarts.powerjambda.models.DefaultErrorResponseBody;
@@ -44,7 +43,7 @@ public class DefaultGlobalExceptionHandler implements GlobalExceptionHandler<Aws
 
     static {
         Map<String, String> headers = new HashMap<>();
-        headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
+        headers.put(HttpHeaders.CONTENT_TYPE, MediaType.JSON_UTF_8.withoutParameters().toString());
         DEFAULT_HEADERS = Collections.unmodifiableMap(headers);
     }
 

@@ -16,13 +16,7 @@
 
 package com.visionarts.powerjambda.models;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
 import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import com.visionarts.powerjambda.AwsProxyRequest;
 
@@ -35,8 +29,6 @@ import com.visionarts.powerjambda.AwsProxyRequest;
 public class ActionRequest<T> {
 
     private AwsProxyRequest request;
-    private Map<String, String> pathParameters;
-    private Map<String, String> queryParameters;
     private T body;
 
     public ActionRequest() {
@@ -45,10 +37,6 @@ public class ActionRequest<T> {
 
     public ActionRequest(AwsProxyRequest request) {
         this.request = request;
-        Optional.ofNullable(request).ifPresent(req -> {
-            pathParameters = toUrlDecodedMap(req.getPathParameters());
-            queryParameters = toUrlDecodedMap(req.getQueryStringParameters());
-        });
     }
 
     /**
@@ -91,19 +79,19 @@ public class ActionRequest<T> {
     }
 
     public Map<String, String> getPathParameters() {
-        return pathParameters;
+        return request.getPathParameters();
     }
 
     public String getPathParameter(String key) {
-        return pathParameters.get(key);
+        return request.getPathParameters().get(key);
     }
 
     public Map<String, String> getQueryParameters() {
-        return queryParameters;
+        return request.getQueryStringParameters();
     }
 
     public String getQueryParameter(String key) {
-        return queryParameters.get(key);
+        return request.getQueryStringParameters().get(key);
     }
 
     public T getBody() {
@@ -117,20 +105,4 @@ public class ActionRequest<T> {
     public String getBodyAsString() {
         return request.getBody();
     }
-
-    private Map<String, String> toUrlDecodedMap(Map<String, String> src) {
-        return Optional.ofNullable(src)
-                .map(m -> m.entrySet().stream()
-                    .collect(Collectors.toMap(e -> urlDecode(e.getKey()), e -> urlDecode(e.getValue()))))
-                .orElseGet(() -> Collections.emptyMap());
-    }
-
-    private String urlDecode(String src) {
-        try {
-            return URLDecoder.decode(src, StandardCharsets.UTF_8.name());
-        } catch (UnsupportedEncodingException e) { // never happen
-            throw new RuntimeException(e);
-        }
-    }
-
 }

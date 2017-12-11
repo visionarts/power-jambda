@@ -40,6 +40,10 @@
       <artifactId>aws-lambda-java-core</artifactId>
     </dependency>
     <dependency>
+      <groupId>com.amazonaws</groupId>
+      <artifactId>aws-lambda-java-log4j2</artifactId>
+    </dependency>
+    <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
     </dependency>
@@ -54,11 +58,6 @@
     <dependency>
       <groupId>com.visionarts</groupId>
       <artifactId>masking-json</artifactId>
-      <version>${power-jambda.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.visionarts</groupId>
-      <artifactId>lambda-log4j2</artifactId>
       <version>${power-jambda.version}</version>
     </dependency>
     <dependency>

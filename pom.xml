@@ -61,7 +61,6 @@
 
   <modules>
     <module>masking-json</module>
-    <module>lambda-log4j2</module>
     <module>power-jambda-core</module>
     <module>power-jambda-events</module>
   </modules>
@@ -97,6 +96,11 @@
         <groupId>com.amazonaws</groupId>
         <artifactId>aws-lambda-java-core</artifactId>
         <version>1.2.0</version>
+      </dependency>
+      <dependency>
+        <groupId>com.amazonaws</groupId>
+        <artifactId>aws-lambda-java-log4j2</artifactId>
+        <version>1.1.0</version>
       </dependency>
       <dependency>
         <groupId>org.jmockit</groupId>

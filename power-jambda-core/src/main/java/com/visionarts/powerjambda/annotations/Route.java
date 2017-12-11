@@ -29,6 +29,6 @@ import com.visionarts.powerjambda.http.HttpMethod;
 @Target(ElementType.TYPE)
 public @interface Route {
     String resourcePath();
-    HttpMethod[] methods() default HttpMethod.NONE;
+    HttpMethod[] methods();
     Class<? extends CorsConfiguration> cors() default DefaultCorsConfiguration.class;
 }

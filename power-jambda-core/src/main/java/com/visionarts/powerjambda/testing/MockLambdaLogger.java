@@ -16,6 +16,8 @@
 
 package com.visionarts.powerjambda.testing;
 
+import java.nio.charset.StandardCharsets;
+
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 
 /**
@@ -23,14 +25,19 @@ import com.amazonaws.services.lambda.runtime.LambdaLogger;
  *
  */
 public class MockLambdaLogger implements LambdaLogger {
-
     private static MockLambdaLogger logger = new MockLambdaLogger();
 
     public static MockLambdaLogger getLogger() {
         return logger;
     }
 
-    public void log(String string) {
-        System.out.println(string); // SUPPRESS CHECKSTYLE Regexp
+    @Override
+    public void log(String message) {
+        System.out.println(message); // SUPPRESS CHECKSTYLE Regexp
+    }
+
+    @Override
+    public void log(byte[] message) {
+        log(new String(message, StandardCharsets.UTF_8));
     }
 }

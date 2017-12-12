@@ -66,6 +66,25 @@ public class ActionRequest<T> {
         return request.getRequestContext().getStage();
     }
 
+    /**
+     * Returns the stage variables defined for the stage in API Gateway.
+     *
+     * @return The stage variables
+     */
+    public Map<String, String> getStageVariables() {
+        return request.getStageVariables();
+    }
+
+    /**
+     * Returns the stage variable defined for the stage in API Gateway.
+     *
+     * @param key The key
+     * @return The stage variable
+     */
+    public String getStageVariable(String key) {
+        return request.getStageVariables().get(key);
+    }
+
     public String getPath() {
         return request.getPath();
     }

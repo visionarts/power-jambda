@@ -20,7 +20,7 @@ package com.visionarts.powerjambda.events;
  * Constants used by the extension for this project.
  *
  */
-public class EventConstants {
+public final class EventConstants {
 
     public static final String EVENT_SOURCE_DYNAMODB = "aws:dynamodb";
     public static final String EVENT_SOURCE_SNS = "aws:sns";
@@ -89,4 +89,8 @@ public class EventConstants {
     /** Optional attribute for DynamoDB event */
     public static final String DYNAMODB_ATTR_EVENT_ATTRIBUTES = "EventAttrs";
 
+    // Suppresses default constructor, ensuring non-instantiability.
+    private EventConstants() {
+        // nothing to do here
+    }
 }

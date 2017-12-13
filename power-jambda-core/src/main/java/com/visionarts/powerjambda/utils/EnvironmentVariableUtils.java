@@ -29,7 +29,7 @@ import java.util.Optional;
  * <br>
  *
  */
-public class EnvironmentVariableUtils {
+public final class EnvironmentVariableUtils {
 
     /**
      * An operation that accepts three input arguments and returns no result.<br>

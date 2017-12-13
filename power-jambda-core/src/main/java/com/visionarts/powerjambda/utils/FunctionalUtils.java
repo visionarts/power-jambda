@@ -28,7 +28,7 @@ import org.apache.logging.log4j.Logger;
  * Provides utility methods for Functional interfaces. <br>
  * <br>
  */
-public class FunctionalUtils {
+public final class FunctionalUtils {
 
     // Suppresses default constructor, ensuring non-instantiability.
     private FunctionalUtils() {

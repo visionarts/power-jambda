@@ -30,7 +30,7 @@ import org.reflections.Reflections;
 /**
  * Reflection utilities.
  */
-public class ReflectionUtils {
+public final class ReflectionUtils {
 
     // Suppresses default constructor, ensuring non-instantiability.
     private ReflectionUtils() {

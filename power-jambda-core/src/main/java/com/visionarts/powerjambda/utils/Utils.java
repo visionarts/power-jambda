@@ -26,7 +26,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * Generic utilities.
  */
-public class Utils {
+public final class Utils {
 
     private static final ObjectMapper defaultMapper =
             new ObjectMapper()

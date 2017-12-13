@@ -23,7 +23,7 @@ import java.util.function.Supplier;
  * Provides utility methods for {@link java.util.Optional} class. <br>
  * <br>
  */
-public class OptionalUtils {
+public final class OptionalUtils {
 
     // Suppresses default constructor, ensuring non-instantiability.
     private OptionalUtils() {

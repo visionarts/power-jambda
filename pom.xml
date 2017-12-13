@@ -202,6 +202,7 @@
         </executions>
         <configuration>
           <configLocation>checkstyle.xml</configLocation>
+          <suppressionsLocation>checkstyle-suppressions.xml</suppressionsLocation>
           <violationSeverity>error</violationSeverity>
           <failsOnError>true</failsOnError>
           <consoleOutput>true</consoleOutput>

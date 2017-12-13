@@ -21,7 +21,7 @@ import java.io.InputStream;
 
 import com.google.common.io.ByteStreams;
 
-public class IoUtils {
+public final class IoUtils {
 
     // Suppresses default constructor, ensuring non-instantiability.
     private IoUtils() {

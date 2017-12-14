@@ -39,6 +39,10 @@ public class ActionRequest<T> {
         this.request = request;
     }
 
+    public AwsProxyRequest getOriginalRequest() {
+        return request;
+    }
+
     /**
      * Returns HTTP method.
      *
@@ -46,15 +50,6 @@ public class ActionRequest<T> {
      */
     public String getMethod() {
         return request.getHttpMethod();
-    }
-
-    /**
-     * Returns remote IP address.
-     *
-     * @return Remote IP address
-     */
-    public String getRemoteAddr() {
-        return request.getRequestContext().getIdentity().getSourceIp();
     }
 
     /**

@@ -111,7 +111,8 @@ public abstract class AbstractRouter<RequestT, ResponseT> implements Router<Requ
                 applicationContext.getApplicationMainClass().getPackage().getName(), request)
                 .orElseThrow(() -> new ClientErrorException(404, "Action not found"));
         @SuppressWarnings("unchecked")
-        LambdaBaseAction<RequestT, ResponseT, ?, ?> act = LambdaBaseAction.class.cast(actionClazz.newInstance());
+        LambdaBaseAction<RequestT, ResponseT, ?, ?> act =
+                LambdaBaseAction.class.cast(actionClazz.getDeclaredConstructor().newInstance());
         return act;
     }
 

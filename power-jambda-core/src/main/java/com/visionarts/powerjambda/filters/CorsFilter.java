@@ -29,7 +29,7 @@ public class CorsFilter implements Filter<AwsProxyResponse> {
 
     public CorsFilter(Class<? extends CorsConfiguration> corsConfigurationClazz) {
         try {
-            this.corsConfiguration = corsConfigurationClazz.newInstance();
+            this.corsConfiguration = corsConfigurationClazz.getDeclaredConstructor().newInstance();
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException("Error while instantiating CorsConfiguration class", e);
         }

@@ -43,7 +43,7 @@ public abstract class MaskableSerializerBase<T> extends StdSerializer<T> {
 
     protected void serializeWithMask(String value, JsonGenerator gen, SerializerProvider provider)
             throws IOException {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(value.length());
         IntStream.range(0, value.length()).forEach(i -> sb.append(maskingValue));
         gen.writeString(sb.toString());
     }

@@ -26,6 +26,7 @@ Resources:
       Runtime: java8
       CodeUri: ../target/power-jambda-sample.jar
       Timeout: 25
+      MemorySize: 512
       Events:
         PostApi:
           Type: Api

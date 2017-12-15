@@ -19,6 +19,7 @@ package com.visionarts.powerjambda.models;
 import java.util.Map;
 
 import com.visionarts.powerjambda.AwsProxyRequest;
+import com.visionarts.powerjambda.http.HttpMethod;
 
 /**
  * The request to populate an action.
@@ -48,8 +49,8 @@ public class ActionRequest<T> {
      *
      * @return HTTP method
      */
-    public String getMethod() {
-        return request.getHttpMethod();
+    public HttpMethod getMethod() {
+        return HttpMethod.valueOf(request.getHttpMethod());
     }
 
     /**

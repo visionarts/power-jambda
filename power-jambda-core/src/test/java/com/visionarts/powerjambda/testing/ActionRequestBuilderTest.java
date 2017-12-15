@@ -17,6 +17,7 @@
 package com.visionarts.powerjambda.testing;
 
 import com.visionarts.powerjambda.AwsProxyRequest;
+import com.visionarts.powerjambda.http.HttpMethod;
 import com.visionarts.powerjambda.models.ActionRequest;
 import org.junit.Test;
 
@@ -39,7 +40,7 @@ public class ActionRequestBuilderTest {
         TestBody testBody = new TestBody();
         ActionRequest<TestBody> request =
                 new ActionRequestBuilder<TestBody>()
-                        .method("GET")
+                        .method(HttpMethod.PUT)
                         .header("x-header", "test-header-value")
                         .path("test-path")
                         .pathParameter("test-param", "test-param-value")
@@ -49,7 +50,7 @@ public class ActionRequestBuilderTest {
                         .body(testBody)
                         .build();
 
-        assertEquals("GET", request.getMethod());
+        assertEquals(HttpMethod.PUT, request.getMethod());
         assertEquals("test-header-value", request.getHeader("x-header"));
         assertEquals(1, request.getHeaders().size());
         assertEquals("test-path", request.getPath());

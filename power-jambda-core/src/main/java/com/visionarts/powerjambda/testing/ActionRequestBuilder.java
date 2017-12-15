@@ -17,6 +17,7 @@
 package com.visionarts.powerjambda.testing;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.HashMap;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -88,7 +89,7 @@ public class ActionRequestBuilder<T> {
         try {
             this.body = om.readValue(body, bodyClazz);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
         request.setBody(body);
         return this;

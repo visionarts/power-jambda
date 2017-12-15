@@ -20,6 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -83,7 +84,7 @@ public class AwsProxyRequestBuilder {
         try {
             body(om.writeValueAsString(body));
         } catch (JsonProcessingException e) {
-            throw new UnsupportedOperationException(e);
+            throw new UncheckedIOException(e);
         }
         return this;
     }

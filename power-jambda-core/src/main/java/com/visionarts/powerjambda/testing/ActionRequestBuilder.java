@@ -23,6 +23,7 @@ import java.util.HashMap;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.visionarts.powerjambda.ApiGatewayRequestContext;
 import com.visionarts.powerjambda.AwsProxyRequest;
+import com.visionarts.powerjambda.http.HttpMethod;
 import com.visionarts.powerjambda.models.ActionRequest;
 import com.visionarts.powerjambda.utils.Utils;
 
@@ -50,8 +51,8 @@ public class ActionRequestBuilder<T> {
         this.request = request;
     }
 
-    public ActionRequestBuilder<T> method(String method) {
-        request.setHttpMethod(method);
+    public ActionRequestBuilder<T> method(HttpMethod method) {
+        request.setHttpMethod(method.name());
         return this;
     }
 

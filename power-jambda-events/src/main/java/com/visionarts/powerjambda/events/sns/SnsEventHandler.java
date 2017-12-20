@@ -61,7 +61,7 @@ public class SnsEventHandler extends AbstractEventHandler<SnsEvent, SnsEventResu
         String subject = sns.getSubject();
         String message = sns.getMessage();
 
-        logger.info("Sns Notification : {}", subject);
+        logger.info("Sns Notification: {}", subject);
         SnsEventMessage msg = Utils.getObjectMapper().readValue(message, SnsEventMessage.class);
         return new AwsEventRequest()
                     .action(msg.action)
@@ -77,7 +77,7 @@ public class SnsEventHandler extends AbstractEventHandler<SnsEvent, SnsEventResu
         if (res.isSuccessful()) {
             result.addSuccessItem(request);
         } else {
-            logger.error("failed processing SNSEvent", res.getCause());
+            logger.error("Failed processing SNSEvent", res.getCause());
             result.addFailureItem(request);
         }
         return result;

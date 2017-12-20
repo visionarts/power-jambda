@@ -104,7 +104,7 @@ public class DynamoDbEventHandler extends AbstractEventHandler<DynamoDbEvent, Dy
 
     @Override
     public DynamoDbEventResult handleRequest(DynamoDbEvent input, Context context) {
-        logger.info("RecordSize : {}", () -> input.getRecords().size());
+        logger.info("RecordSize: {}", () -> input.getRecords().size());
         return super.handleRequest(input, context);
     }
 
@@ -161,12 +161,12 @@ public class DynamoDbEventHandler extends AbstractEventHandler<DynamoDbEvent, Dy
         String eventId = dynamoDbStreamRecord.getEventId();
         Optional<Map<String, AttributeValue>> image = preferableImage(dynamoDbStreamRecord.getDynamodb());
         if (!image.isPresent()) {
-            logger.error("Skip record : eventID = {} not found target image in {}",
+            logger.error("Skip record: eventID = {} not found target image in {}",
                     eventId, dynamoDbStreamRecord.getDynamodb().getStreamViewType());
             return false;
         }
         if (!containsRequiredAttributes(image.get())) {
-            logger.error("Skip record : eventID = {} missing required key", eventId);
+            logger.error("Skip record: eventID = {} missing required key", eventId);
             return false;
         }
         return true;
@@ -181,7 +181,7 @@ public class DynamoDbEventHandler extends AbstractEventHandler<DynamoDbEvent, Dy
         try {
             eventAttrs = getEventAttributes(image);
         } catch (IOException e) {
-            logger.error("Skip record : eventID = {} failed to deserialize JSON content {} in {}, msg = {}",
+            logger.error("Skip record: eventID = {} failed to deserialize JSON content {} in {}, msg = {}",
                     dynamoDbStreamRecord.getEventId(),
                     image.get(EventConstants.DYNAMODB_ATTR_EVENT_ATTRIBUTES).getS(),
                     EventConstants.DYNAMODB_ATTR_EVENT_ATTRIBUTES,

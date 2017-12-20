@@ -40,11 +40,11 @@ public class EventActionRouter extends AbstractRouter<AwsEventRequest, AwsEventR
 
     @Override
     protected Optional<Class<?>> findAction(String packagePath, AwsEventRequest request) {
-        logger.debug("action={}", () -> request.getAction());
+        logger.debug("Finding action class from {} action: {}", () -> packagePath, () -> request.getAction());
         try {
             return Optional.ofNullable(Class.forName(request.getAction()));
         } catch (ClassNotFoundException e) {
-            logger.error("Illegal a FQCN of the action : {}", () -> e.getMessage());
+            logger.error("Illegal a FQCN of the action: {}", () -> e.getMessage());
             return Optional.empty();
         }
     }

@@ -52,7 +52,7 @@ public class S3EventHandler extends AbstractEventHandler<S3EventNotification, S3
         if (res.isSuccessful()) {
             result.addSuccessItem(request);
         } else {
-            logger.error("failed processing S3Event", res.getCause());
+            logger.error("Failed processing S3Event", res.getCause());
             result.addFailureItem(request);
         }
         return result;

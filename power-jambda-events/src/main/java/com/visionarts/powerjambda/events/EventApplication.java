@@ -25,6 +25,8 @@ import java.util.function.Consumer;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.visionarts.powerjambda.ApplicationContext;
 import com.visionarts.powerjambda.logging.LambdaLoggerHelper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * The class that can be used to launch a Lambda application from
@@ -52,6 +54,8 @@ import com.visionarts.powerjambda.logging.LambdaLoggerHelper;
  * </pre>
  */
 public class EventApplication {
+
+    private static final Logger logger = LogManager.getLogger(EventApplication.class);
 
     private static EventApplication application;
 
@@ -109,9 +113,11 @@ public class EventApplication {
                            Context context, Consumer<ApplicationContext> startupHandler) throws Exception {
         application = Optional.ofNullable(application).orElseGet(
             () -> {
+                logger.debug("power-jambda-events initializing");
                 EventApplication app = new EventApplication(lambdaMainHandlerClazz, registry);
                 Optional.ofNullable(startupHandler)
                     .ifPresent(h -> h.accept(app.applicationContext));
+                logger.debug("power-jambda-events initialized");
                 return app;
             });
         application.handle(input, output, context);

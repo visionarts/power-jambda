@@ -53,7 +53,7 @@ public final class LambdaEventHandler {
      */
     public void lambdaHandler(InputStream input, OutputStream output, Context context) {
 
-        logger.info("Start to process the event");
+        logger.info("Starting to process event: requestId: {}", context.getAwsRequestId());
 
         byte[] inputBytes;
         try {
@@ -62,7 +62,7 @@ public final class LambdaEventHandler {
             throw logger.throwing(new UncheckedIOException(e));
         }
 
-        logger.debug("Incoming event parameter: {}", () -> new String(inputBytes));
+        logger.debug("Incoming event: {}", () -> new String(inputBytes));
 
         Optional<? extends Result<?>> result = executors.stream()
             .map(executor -> executor.apply(inputBytes, context))
@@ -71,12 +71,12 @@ public final class LambdaEventHandler {
             .get();
 
         result.ifPresent(r -> {
-            logger.info("Event summary: {}", r.summary());
+            logger.info("Event result: {}", r.summary());
             writeValueQuietly(output, r);
         });
 
-        logger.info("Process finished");
-        result.ifPresent(r -> r.throwOnFailure(() -> new RuntimeException("Some event requests failed")));
+        logger.info("Process finished: requestId: {}", context.getAwsRequestId());
+        result.ifPresent(r -> r.throwOnFailure(() -> new RuntimeException("Notification to AWS Lambda: Event request failed")));
     }
 
     private void writeValueQuietly(OutputStream out, Object value) {
@@ -84,7 +84,7 @@ public final class LambdaEventHandler {
             Utils.getObjectMapper().writeValue(out, value);
             logger.debug("Event result: {}", value);
         } catch (IOException ex) {
-            logger.warn("failed to serialize successful event result for logging", ex);
+            logger.warn("Failed to serialize event result for logging", ex);
         }
     }
 }

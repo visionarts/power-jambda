@@ -55,7 +55,7 @@ public class DynamoDbEventExecutor extends AbstractEventExecutor<DynamoDbEvent, 
             event.ifPresent(e -> {
                 ThreadContext.put(EventConstants.LOG_THREAD_CONTEXT_EVENT_KEY,
                         EventConstants.EVENT_SOURCE_DYNAMODB);
-                logger.info("Deserialize current input to DynamoDbEvent instance successfully");
+                logger.info("Successfully deserialized current input to DynamoDbEvent");
             });
         } catch (IOException e) {
             // fall through

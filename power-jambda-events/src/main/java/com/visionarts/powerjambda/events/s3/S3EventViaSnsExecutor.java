@@ -44,7 +44,7 @@ public class S3EventViaSnsExecutor extends S3EventExecutor {
                 event.ifPresent(e -> {
                     ThreadContext.put(EventConstants.LOG_THREAD_CONTEXT_EVENT_KEY,
                             EventConstants.EVENT_SOURCE_S3_VIA_SNS);
-                    logger.info("Deserialize current input to S3EventNotification via Sns instance successfully");
+                    logger.info("Successfully deserialized current input to S3EventNotification via Sns");
                 });
                 return event;
             } catch (IOException e) {

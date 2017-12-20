@@ -52,7 +52,7 @@ public class S3EventExecutor extends AbstractEventExecutor<S3EventNotification, 
             event.ifPresent(e -> {
                 ThreadContext.put(EventConstants.LOG_THREAD_CONTEXT_EVENT_KEY,
                         EventConstants.EVENT_SOURCE_S3);
-                logger.info("Deserialize current input to S3EventNotification instance successfully");
+                logger.info("Successfully deserialized current input to S3EventNotification");
             });
         } catch (IOException e) {
             // fall through

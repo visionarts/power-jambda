@@ -107,12 +107,12 @@ public abstract class AbstractEventAction<T>
     @Override
     protected FunctionalUtils.UnsafeBiConsumer<EventActionRequest<T>, Context> loggerBeforeHandle() {
         return (r, c) ->
-                logger.info("START {} with {}",
+                logger.info("Starting {} body: {}",
                     () -> this.getClass().getName(), () -> maskableJson(r.getBody()));
     }
 
     @Override
     protected FunctionalUtils.UnsafeBiConsumer<EventActionRequest<T>, Context> loggerAfterHandle() {
-        return (r, c) -> logger.info("END {}", this.getClass().getName());
+        return (r, c) -> logger.info("End {}", this.getClass().getName());
     }
 }

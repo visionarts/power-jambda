@@ -87,9 +87,9 @@ public class Result<T> {
     @JsonIgnore
     public String summary() {
         StringBuilder sb = new StringBuilder();
-        sb.append("successItems = ").append(successItems.size())
-            .append(", failureItems = ").append(failureItems.size())
-            .append(", skippedItems = ").append(skippedItems.size());
+        sb.append("successItems: ").append(successItems.size())
+            .append(", failureItems: ").append(failureItems.size())
+            .append(", skippedItems: ").append(skippedItems.size());
         return sb.toString();
     }
 

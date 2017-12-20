@@ -44,7 +44,7 @@ public class SnsEventExecutor extends AbstractEventExecutor<SnsEvent, SnsEventRe
             event.ifPresent(e -> {
                 ThreadContext.put(EventConstants.LOG_THREAD_CONTEXT_EVENT_KEY,
                         EventConstants.EVENT_SOURCE_SNS);
-                logger.info("Deserialize current input to SnsEvent instance successfully");
+                logger.info("Successfully deserialized current input to SnsEvent instance");
             });
         } catch (IOException e) {
             // fall through

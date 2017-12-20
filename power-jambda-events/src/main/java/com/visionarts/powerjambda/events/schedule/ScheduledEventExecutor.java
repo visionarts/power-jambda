@@ -43,7 +43,7 @@ public class ScheduledEventExecutor extends AbstractEventExecutor<ScheduledEvent
             event.ifPresent(e -> {
                 ThreadContext.put(EventConstants.LOG_THREAD_CONTEXT_EVENT_KEY,
                         EventConstants.EVENT_SOURCE_SCHEDULED_EVENTS);
-                logger.info("Deserialize current input to ScheduledEvent instance successfully");
+                logger.info("Successfully deserialized current input to ScheduledEvent");
             });
         } catch (IOException e) {
             // fall through

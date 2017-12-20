@@ -46,13 +46,15 @@ public class ActionRouter extends AbstractRouter<AwsProxyRequest, AwsProxyRespon
     @Override
     public AwsProxyResponse apply(AwsProxyRequest request, Context context) {
         AwsProxyResponse response = super.apply(request, context);
-        logger.info("Return the response code : {}", response.getStatusCode());
+        logger.info("Response status code: {}", response.getStatusCode());
         return response;
     }
 
     @Override
     protected Optional<Class<?>> findAction(String packagePath, AwsProxyRequest request) {
-        logger.debug("resourcePath={}, method={}", () -> request.getRequestContext().getResourcePath(),
+        logger.debug("Finding action class from {} [resourcePath: {}, method: {}]",
+            () -> packagePath,
+            () -> request.getRequestContext().getResourcePath(),
             () -> request.getHttpMethod());
         Set<Class<?>> actionClasses =
                 ReflectionUtils.findAllClassesWithAnnotation(packagePath,

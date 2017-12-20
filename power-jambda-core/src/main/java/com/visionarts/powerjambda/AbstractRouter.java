@@ -88,8 +88,8 @@ public abstract class AbstractRouter<RequestT, ResponseT> implements Router<Requ
         } catch (ClientErrorException e) {
             throw e;
         } catch (Exception raisedException) {
-            logger.debug("The exception have occurred while processing action class : {}", raisedException.getMessage());
-            logger.debug("Exception detail", raisedException);
+            logger.info("An exception have occurred while processing action class: {}", raisedException.getMessage());
+            logger.debug("Raised exception detail", raisedException);
 
             return action.handleException(raisedException, context);
         } finally {
@@ -110,6 +110,8 @@ public abstract class AbstractRouter<RequestT, ResponseT> implements Router<Requ
         Class<?> actionClazz = findAction(
                 applicationContext.getApplicationMainClass().getPackage().getName(), request)
                 .orElseThrow(() -> new ClientErrorException(404, "Action not found"));
+        logger.debug("Found {} action class from {}", actionClazz::getName,
+            () -> applicationContext.getApplicationMainClass().getPackage().getName());
         @SuppressWarnings("unchecked")
         LambdaBaseAction<RequestT, ResponseT, ?, ?> act =
                 LambdaBaseAction.class.cast(actionClazz.getDeclaredConstructor().newInstance());

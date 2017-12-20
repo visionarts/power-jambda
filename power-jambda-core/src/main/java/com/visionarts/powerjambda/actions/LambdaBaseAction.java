@@ -56,7 +56,7 @@ public abstract class LambdaBaseAction<RequestT, ResponseT, ActionRequestT, Acti
         ActionResultT result;
         try {
             result = handle(actionRequest, context);
-            logger.info("Returned the action result {}", () -> maskableJson(result));
+            logger.info("Returned action result: {}", () -> maskableJson(result));
         } finally {
             afterHandle(actionRequest, context);
         }

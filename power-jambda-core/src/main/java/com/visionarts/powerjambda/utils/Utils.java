@@ -16,10 +16,12 @@
 
 package com.visionarts.powerjambda.utils;
 
+import java.io.UncheckedIOException;
 import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -80,5 +82,13 @@ public final class Utils {
     public static <T, E extends Throwable> T requireNonNull(T obj,
             Supplier<? extends E> exceptionSupplier) throws E {
         return require(obj, Objects::nonNull, exceptionSupplier);
+    }
+
+    public static <T> String writeValueAsString(T value) {
+        try {
+            return getObjectMapper().writeValueAsString(value);
+        } catch (JsonProcessingException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 }

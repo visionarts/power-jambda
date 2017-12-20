@@ -109,13 +109,13 @@ public abstract class AbstractLambdaAction<T, ActionResultT>
     @Override
     protected UnsafeBiConsumer<ActionRequest<T>, Context> loggerBeforeHandle() {
         return (r, c) ->
-                logger.info("START {} with {}",
+                logger.info("Starting {} body: {}",
                     () -> this.getClass().getName(), () -> maskableJson(r.getBody()));
     }
 
     @Override
     protected UnsafeBiConsumer<ActionRequest<T>, Context> loggerAfterHandle() {
-        return (r, c) -> logger.info("END {}", this.getClass().getName());
+        return (r, c) -> logger.info("End {}", this.getClass().getName());
     }
 
 }

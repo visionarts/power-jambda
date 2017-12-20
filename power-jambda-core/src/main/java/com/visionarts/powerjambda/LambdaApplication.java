@@ -32,6 +32,8 @@ import com.visionarts.powerjambda.exceptions.ClientErrorException;
 import com.visionarts.powerjambda.exceptions.InternalErrorException;
 import com.visionarts.powerjambda.logging.LambdaLoggerHelper;
 import com.visionarts.powerjambda.utils.Utils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * The class that can be used to launch a Lambda application from
@@ -53,6 +55,8 @@ import com.visionarts.powerjambda.utils.Utils;
  * </pre>
  */
 public class LambdaApplication {
+
+    private static final Logger logger = LogManager.getLogger(LambdaApplication.class);
 
     private static LambdaApplication application;
 
@@ -107,9 +111,11 @@ public class LambdaApplication {
                            Context context, Consumer<ApplicationContext> startUpHandler) throws Exception {
         application = Optional.ofNullable(application).orElseGet(
             () -> {
+                logger.debug("power-jambda-core initializing");
                 LambdaApplication app = new LambdaApplication(lambdaMainHandlerClazz);
                 Optional.ofNullable(startUpHandler)
                     .ifPresent(h -> h.accept(app.applicationContext));
+                logger.debug("power-jambda-core initialized");
                 return app;
             });
         application.handle(input, output, context);
@@ -117,12 +123,14 @@ public class LambdaApplication {
 
     private void handle(InputStream input, OutputStream output, Context context) throws Exception {
         LambdaLoggerHelper.initialize(context);
+        logger.debug("Starting request handler: requestId: {}", context.getAwsRequestId());
         try {
             AwsProxyRequest request = parseRequest(input);
             LambdaLoggerHelper.setRequestInfo(request);
             AwsProxyResponse response = router.apply(request, context);
             writeResponse(response, output);
         } finally {
+            logger.debug("End request handler: requestId: {}", context.getAwsRequestId());
             LambdaLoggerHelper.clear();
         }
     }
@@ -130,7 +138,9 @@ public class LambdaApplication {
     private AwsProxyRequest parseRequest(InputStream input)
             throws ClientErrorException, InternalErrorException {
         try {
-            return om.readValue(input, AwsProxyRequest.class);
+            AwsProxyRequest request = om.readValue(input, AwsProxyRequest.class);
+            logger.debug("Parsed request: {}", () -> Utils.writeValueAsString(request));
+            return request;
         } catch (JsonParseException | JsonMappingException e) {
             throw new ClientErrorException("Error while parsing raw request", e);
         } catch (IOException e) {
@@ -139,6 +149,7 @@ public class LambdaApplication {
     }
 
     private void writeResponse(AwsProxyResponse response, OutputStream output) {
+        logger.debug("Writing response: {}", () -> Utils.writeValueAsString(response));
         try {
             om.writeValue(output, response);
         } catch (IOException e) { // never happen

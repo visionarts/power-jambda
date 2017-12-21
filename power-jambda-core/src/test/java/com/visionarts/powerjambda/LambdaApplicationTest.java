@@ -16,32 +16,28 @@
 
 package com.visionarts.powerjambda;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
-
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.amazonaws.services.lambda.runtime.Context;
+import com.visionarts.powerjambda.actions.models.Person;
+import com.visionarts.powerjambda.testing.AwsProxyRequestBuilder;
+import com.visionarts.powerjambda.testing.MockLambdaContext;
+import com.visionarts.powerjambda.testutils.JsonUtils;
+import mockit.Deencapsulation;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import com.amazonaws.services.lambda.runtime.Context;
-import com.visionarts.powerjambda.ApplicationContext;
-import com.visionarts.powerjambda.AwsProxyResponse;
-import com.visionarts.powerjambda.LambdaApplication;
-import com.visionarts.powerjambda.actions.models.Person;
-import com.visionarts.powerjambda.testing.AwsProxyRequestBuilder;
-import com.visionarts.powerjambda.testing.MockLambdaContext;
-import com.visionarts.powerjambda.testutils.JsonUtils;
-
-import mockit.Deencapsulation;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasEntry;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 
 /**
@@ -106,8 +102,7 @@ public class LambdaApplicationTest {
                 .body(expect)
                 .buildAsStream();
 
-        // clear static member
-        Deencapsulation.setField(LambdaApplication.class, "application", null);
+        Deencapsulation.invoke(LambdaApplication.class, "initialize");
 
         TestLambdaApplication.lambdaHandler(input, output, mockContext,
                 appContext -> map.put("startupHandler", appContext));

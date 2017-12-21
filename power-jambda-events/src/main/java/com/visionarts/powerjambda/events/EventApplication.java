@@ -53,16 +53,21 @@ import org.apache.logging.log4j.Logger;
  *   }
  * </pre>
  */
-public class EventApplication {
+public final class EventApplication {
 
     private static final Logger logger = LogManager.getLogger(EventApplication.class);
+    private static final String APPLICATION_NAME = EventApplication.class.getSimpleName();
 
     private static EventApplication application;
 
     private ApplicationContext applicationContext;
     private LambdaEventHandler handler;
 
-    public EventApplication(Class<?> mainApplicationClazz, EventExecutorRegistry registry) {
+    static {
+        initialize();
+    }
+
+    private EventApplication(Class<?> mainApplicationClazz, EventExecutorRegistry registry) {
         this.applicationContext = new ApplicationContext(Objects.requireNonNull(mainApplicationClazz));
         this.handler = new LambdaEventHandler(applicationContext, Objects.requireNonNull(registry));
     }
@@ -113,19 +118,23 @@ public class EventApplication {
                            Context context, Consumer<ApplicationContext> startupHandler) throws Exception {
         application = Optional.ofNullable(application).orElseGet(
             () -> {
-                logger.debug("power-jambda-events initializing");
                 EventApplication app = new EventApplication(lambdaMainHandlerClazz, registry);
                 Optional.ofNullable(startupHandler)
                     .ifPresent(h -> h.accept(app.applicationContext));
-                logger.debug("power-jambda-events initialized");
+                logger.debug("{} initialized", APPLICATION_NAME);
                 return app;
             });
         application.handle(input, output, context);
     }
 
-    private void handle(InputStream input, OutputStream output, Context context) throws Exception {
+    private static void initialize() {
+        LambdaLoggerHelper.initialize();
+        logger.debug("{} initializing", APPLICATION_NAME);
+        application = null;
+    }
 
-        LambdaLoggerHelper.initialize(context);
+    private void handle(InputStream input, OutputStream output, Context context) throws Exception {
+        LambdaLoggerHelper.setLambdaContext(context);
         try {
             handler.lambdaHandler(input, output, context);
         } finally {

@@ -22,9 +22,12 @@ import java.util.Objects;
 import java.util.Optional;
 
 import com.amazonaws.services.lambda.runtime.Context;
+import com.visionarts.powerjambda.ApiGatewayRequestContext;
+import com.visionarts.powerjambda.ApiGatewayRequestIdentity;
 import com.visionarts.powerjambda.AwsProxyRequest;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
@@ -36,7 +39,8 @@ import org.apache.logging.log4j.core.config.LoggerConfig;
  */
 public class LambdaLoggerHelper {
 
-    private static final String LOG_LEVEL_ENV_NAME = "LOG_LEVEL";
+    private static final Logger logger = LogManager.getLogger(LambdaLoggerHelper.class);
+    private static final String LOG_LEVEL_ENV_VAR_KEY = "LOG_LEVEL";
     private static final Level DEFAULT_LOG_LEVEL = Level.INFO;
     private static final List<String> DEFAULT_LOGGING_HEADERS = Arrays.asList(
             "X-Amz-Cf-Id",
@@ -44,33 +48,48 @@ public class LambdaLoggerHelper {
 
     private static List<String> availableLoggingHeaders;
 
+    static {
+        Optional<String> logLevelEnv = Optional.ofNullable(System.getenv(LOG_LEVEL_ENV_VAR_KEY));
+        Level logLevel = logLevelEnv.map(rawVal -> {
+            Level level = Level.toLevel(rawVal, DEFAULT_LOG_LEVEL);
+            logger.info("Overriding the log level for log4j 2. Environment variable {} has value: \'{}\' ({})",
+                    LOG_LEVEL_ENV_VAR_KEY, level, rawVal);
+            return level;
+        }).orElse(DEFAULT_LOG_LEVEL);
+        updateLevel(logLevel);
+    }
+
     // Suppresses default constructor, ensuring non-instantiability.
     private LambdaLoggerHelper() {
     }
 
-    public static void initialize(Context context) {
-        initialize(context, DEFAULT_LOGGING_HEADERS);
+    public static void initialize() {
+        initialize(DEFAULT_LOGGING_HEADERS);
     }
 
-    public static void initialize(Context context, List<String> loggingHeaders) {
+    public static void initialize(List<String> loggingHeaders) {
         availableLoggingHeaders = Objects.requireNonNull(loggingHeaders);
-        updateLevel(getLogLevel(DEFAULT_LOG_LEVEL));
-        ThreadContext.put("requestId", context.getAwsRequestId());
-        ThreadContext.put("version", context.getFunctionVersion());
     }
 
     public static void clear() {
         ThreadContext.clearAll();
     }
 
-    public static void setRequestInfo(AwsProxyRequest request) {
+    public static void setRequestInfo(AwsProxyRequest request, Context context) {
         Optional.ofNullable(request.getRequestContext())
-            .map(c -> c.getIdentity())
-            .map(i -> i.getSourceIp())
+            .map(ApiGatewayRequestContext::getIdentity)
+            .map(ApiGatewayRequestIdentity::getSourceIp)
             .ifPresent(ip -> ThreadContext.put("sourceIp", ip));
         Optional.ofNullable(request.getHeaders())
-            .ifPresent(hdrs -> availableLoggingHeaders.forEach(
-                lhdr -> putIfNotNullValue(lhdr, hdrs.get(lhdr))));
+            .ifPresent(headers -> availableLoggingHeaders.forEach(
+                headerKey -> putIfNotNullValue(headerKey, headers.get(headerKey))));
+
+        setLambdaContext(context);
+    }
+
+    public static void setLambdaContext(Context context) {
+        ThreadContext.put("requestId", context.getAwsRequestId());
+        ThreadContext.put("version", context.getFunctionVersion());
     }
 
     private static void putIfNotNullValue(String key, String value) {
@@ -86,9 +105,5 @@ public class LambdaLoggerHelper {
             loggerConfig.setLevel(level);
             ctx.updateLoggers();
         }
-    }
-
-    private static Level getLogLevel(Level defaultLevel) {
-        return Level.toLevel(System.getenv(LOG_LEVEL_ENV_NAME), defaultLevel);
     }
 }

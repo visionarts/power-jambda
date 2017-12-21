@@ -54,9 +54,10 @@ import org.apache.logging.log4j.Logger;
  * }
  * </pre>
  */
-public class LambdaApplication {
+public final class LambdaApplication {
 
     private static final Logger logger = LogManager.getLogger(LambdaApplication.class);
+    private static final String APPLICATION_NAME = LambdaApplication.class.getSimpleName();
 
     private static LambdaApplication application;
 
@@ -64,7 +65,11 @@ public class LambdaApplication {
     private final ActionRouter router;
     private final ObjectMapper om;
 
-    public LambdaApplication(Class<?> mainApplicationClazz) {
+    static {
+        initialize();
+    }
+
+    private LambdaApplication(Class<?> mainApplicationClazz) {
         this.applicationContext = new ApplicationContext(Objects.requireNonNull(mainApplicationClazz));
         this.router = new ActionRouter(this.applicationContext);
         this.om = Utils.getObjectMapper();
@@ -111,22 +116,26 @@ public class LambdaApplication {
                            Context context, Consumer<ApplicationContext> startUpHandler) throws Exception {
         application = Optional.ofNullable(application).orElseGet(
             () -> {
-                logger.debug("power-jambda-core initializing");
                 LambdaApplication app = new LambdaApplication(lambdaMainHandlerClazz);
                 Optional.ofNullable(startUpHandler)
                     .ifPresent(h -> h.accept(app.applicationContext));
-                logger.debug("power-jambda-core initialized");
+                logger.debug("{} initialized", APPLICATION_NAME);
                 return app;
             });
         application.handle(input, output, context);
     }
 
+    private static void initialize() {
+        LambdaLoggerHelper.initialize();
+        logger.debug("{} initializing", APPLICATION_NAME);
+        application = null;
+    }
+
     private void handle(InputStream input, OutputStream output, Context context) throws Exception {
-        LambdaLoggerHelper.initialize(context);
         logger.debug("Starting request handler: requestId: {}", context.getAwsRequestId());
         try {
             AwsProxyRequest request = parseRequest(input);
-            LambdaLoggerHelper.setRequestInfo(request);
+            LambdaLoggerHelper.setRequestInfo(request, context);
             AwsProxyResponse response = router.apply(request, context);
             writeResponse(response, output);
         } finally {

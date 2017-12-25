@@ -75,7 +75,7 @@ public class LambdaLoggerHelper {
         ThreadContext.clearAll();
     }
 
-    public static void setRequestInfo(AwsProxyRequest request, Context context) {
+    public static void putThreadContext(AwsProxyRequest request, Context context) {
         Optional.ofNullable(request.getRequestContext())
             .map(ApiGatewayRequestContext::getIdentity)
             .map(ApiGatewayRequestIdentity::getSourceIp)
@@ -84,10 +84,10 @@ public class LambdaLoggerHelper {
             .ifPresent(headers -> availableLoggingHeaders.forEach(
                 headerKey -> putIfNotNullValue(headerKey, headers.get(headerKey))));
 
-        setLambdaContext(context);
+        putThreadContext(context);
     }
 
-    public static void setLambdaContext(Context context) {
+    public static void putThreadContext(Context context) {
         ThreadContext.put("requestId", context.getAwsRequestId());
         ThreadContext.put("version", context.getFunctionVersion());
     }

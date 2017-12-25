@@ -135,7 +135,7 @@ public final class LambdaApplication {
         logger.debug("Starting request handler: requestId: {}", context.getAwsRequestId());
         try {
             AwsProxyRequest request = parseRequest(input);
-            LambdaLoggerHelper.setRequestInfo(request, context);
+            LambdaLoggerHelper.putThreadContext(request, context);
             AwsProxyResponse response = router.apply(request, context);
             writeResponse(response, output);
         } finally {

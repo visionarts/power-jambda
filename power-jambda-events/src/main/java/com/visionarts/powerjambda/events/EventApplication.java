@@ -134,7 +134,7 @@ public final class EventApplication {
     }
 
     private void handle(InputStream input, OutputStream output, Context context) throws Exception {
-        LambdaLoggerHelper.setLambdaContext(context);
+        LambdaLoggerHelper.putThreadContext(context);
         try {
             handler.lambdaHandler(input, output, context);
         } finally {

@@ -26,6 +26,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.reflections.Reflections;
+import org.reflections.util.ConfigurationBuilder;
+import org.reflections.util.FilterBuilder;
 
 /**
  * Reflection utilities.
@@ -56,7 +58,11 @@ public final class ReflectionUtils {
             Class<? extends Annotation> annotation) {
         Objects.requireNonNull(packagePrefix);
         Objects.requireNonNull(annotation);
-        Reflections reflections = new Reflections(packagePrefix);
+        ConfigurationBuilder cb = new ConfigurationBuilder()
+                .useParallelExecutor()
+                .forPackages(packagePrefix)
+                .filterInputsBy(new FilterBuilder().includePackage(packagePrefix));
+        Reflections reflections = new Reflections(cb);
         return reflections.getTypesAnnotatedWith(annotation);
     }
 

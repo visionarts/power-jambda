@@ -46,8 +46,6 @@ public class LambdaLoggerHelper {
             "X-Amz-Cf-Id",
             "X-Amzn-Trace-Id");
 
-    private static List<String> availableLoggingHeaders;
-
     static {
         Optional<String> logLevelEnv = Optional.ofNullable(System.getenv(LOG_LEVEL_ENV_VAR_KEY));
         Level logLevel = logLevelEnv.map(rawVal -> {
@@ -63,19 +61,16 @@ public class LambdaLoggerHelper {
     private LambdaLoggerHelper() {
     }
 
-    public static void initialize() {
-        initialize(DEFAULT_LOGGING_HEADERS);
-    }
-
-    public static void initialize(List<String> loggingHeaders) {
-        availableLoggingHeaders = Objects.requireNonNull(loggingHeaders);
-    }
-
     public static void clear() {
         ThreadContext.clearAll();
     }
 
-    public static void putThreadContext(AwsProxyRequest request, Context context) {
+    public static void putThreadContext(AwsProxyRequest request) {
+        putThreadContext(request, DEFAULT_LOGGING_HEADERS);
+    }
+
+    public static void putThreadContext(AwsProxyRequest request, List<String> loggingHeaders) {
+        List<String> availableLoggingHeaders = Objects.requireNonNull(loggingHeaders);
         Optional.ofNullable(request.getRequestContext())
             .map(ApiGatewayRequestContext::getIdentity)
             .map(ApiGatewayRequestIdentity::getSourceIp)
@@ -83,8 +78,6 @@ public class LambdaLoggerHelper {
         Optional.ofNullable(request.getHeaders())
             .ifPresent(headers -> availableLoggingHeaders.forEach(
                 headerKey -> putIfNotNullValue(headerKey, headers.get(headerKey))));
-
-        putThreadContext(context);
     }
 
     public static void putThreadContext(Context context) {

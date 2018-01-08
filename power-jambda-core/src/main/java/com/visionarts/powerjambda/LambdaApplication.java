@@ -126,16 +126,16 @@ public final class LambdaApplication {
     }
 
     private static void initialize() {
-        LambdaLoggerHelper.initialize();
         logger.debug("{} initializing", APPLICATION_NAME);
         application = null;
     }
 
     private void handle(InputStream input, OutputStream output, Context context) throws Exception {
+        LambdaLoggerHelper.putThreadContext(context);
         logger.debug("Starting request handler: requestId: {}", context.getAwsRequestId());
         try {
             AwsProxyRequest request = parseRequest(input);
-            LambdaLoggerHelper.putThreadContext(request, context);
+            LambdaLoggerHelper.putThreadContext(request);
             AwsProxyResponse response = router.apply(request, context);
             writeResponse(response, output);
         } finally {

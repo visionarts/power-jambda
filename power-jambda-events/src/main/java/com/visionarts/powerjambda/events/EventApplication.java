@@ -128,7 +128,6 @@ public final class EventApplication {
     }
 
     private static void initialize() {
-        LambdaLoggerHelper.initialize();
         logger.debug("{} initializing", APPLICATION_NAME);
         application = null;
     }

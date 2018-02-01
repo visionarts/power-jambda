@@ -107,8 +107,8 @@ public abstract class AbstractEventAction<T>
     @Override
     protected FunctionalUtils.UnsafeBiConsumer<EventActionRequest<T>, Context> loggerBeforeHandle() {
         return (r, c) ->
-                logger.info("Starting {} body: {}",
-                    () -> this.getClass().getName(), () -> maskableJson(r.getBody()));
+                logger.info("Starting {} body: {} ({})",
+                    () -> this.getClass().getName(), () -> actionBodyType().getName(), () -> maskableJson(r.getBody()));
     }
 
     @Override

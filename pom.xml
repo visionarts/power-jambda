@@ -22,7 +22,7 @@
 
   <groupId>com.visionarts</groupId>
   <artifactId>power-jambda-pom</artifactId>
-  <version>0.9.7-SNAPSHOT</version>
+  <version>0.9.9-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Power Jambda :: Parent</name>
   <description>

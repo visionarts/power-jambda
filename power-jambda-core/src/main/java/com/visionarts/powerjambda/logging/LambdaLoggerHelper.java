@@ -81,7 +81,11 @@ public class LambdaLoggerHelper {
     }
 
     public static void putThreadContext(Context context) {
-        ThreadContext.put("requestId", context.getAwsRequestId());
+        if (!ThreadContext.containsKey("AWSRequestId")) {
+            // AWS Lambda does not put request id to MDC at cold start,
+            // so put it myself
+            ThreadContext.put("AWSRequestId", context.getAwsRequestId());
+        }
         ThreadContext.put("version", context.getFunctionVersion());
     }
 

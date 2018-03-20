@@ -16,7 +16,9 @@
 
 package com.visionarts.powerjambda.models;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 
 import com.visionarts.powerjambda.AwsProxyRequest;
 import com.visionarts.powerjambda.http.HttpMethod;
@@ -94,19 +96,21 @@ public class ActionRequest<T> {
     }
 
     public Map<String, String> getPathParameters() {
-        return request.getPathParameters();
+        return Optional.ofNullable(request.getPathParameters())
+                .orElse(Collections.emptyMap());
     }
 
     public String getPathParameter(String key) {
-        return request.getPathParameters().get(key);
+        return getPathParameters().get(key);
     }
 
     public Map<String, String> getQueryParameters() {
-        return request.getQueryStringParameters();
+        return Optional.ofNullable(request.getQueryStringParameters())
+                .orElse(Collections.emptyMap());
     }
 
     public String getQueryParameter(String key) {
-        return request.getQueryStringParameters().get(key);
+        return getQueryParameters().get(key);
     }
 
     public T getBody() {

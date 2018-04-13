@@ -48,7 +48,7 @@ public class ActionRouterTest {
 
     private static final String REQUEST_JSON_TEMPLATE = "requests/awsproxyrequest_api-gateway.json";
     private static final String CONTENT_TYPE = "Content-Type";
-    private static final String APPLICATION_JSON = "application/json";
+    private static final String APPLICATION_JSON = "application/json; charset=utf-8";
     private static final String ACCESS_CONTROL_ALLOW_ORIGIN = "Access-Control-Allow-Origin";
     private static final String ACCESS_CONTROL_ALLOW_CREDENTIALS = "Access-Control-Allow-Credentials";
     private static final Context mockContext = new MockLambdaContext();

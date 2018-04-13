@@ -45,7 +45,7 @@ import mockit.Mocked;
 public class DefaultActionExceptionResolverTest {
 
     private static final String CONTENT_TYPE = "Content-Type";
-    private static final String APPLICATION_JSON = "application/json";
+    private static final String APPLICATION_JSON = "application/json; charset=utf-8";
 
     private DefaultActionExceptionResolver<AwsProxyResponse> resolver;
 

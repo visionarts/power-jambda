@@ -43,7 +43,7 @@ public class DefaultGlobalExceptionHandler implements GlobalExceptionHandler<Aws
 
     static {
         Map<String, String> headers = new HashMap<>();
-        headers.put(HttpHeaders.CONTENT_TYPE, MediaType.JSON_UTF_8.withoutParameters().toString());
+        headers.put(HttpHeaders.CONTENT_TYPE, MediaType.JSON_UTF_8.toString());
         DEFAULT_HEADERS = Collections.unmodifiableMap(headers);
     }
 

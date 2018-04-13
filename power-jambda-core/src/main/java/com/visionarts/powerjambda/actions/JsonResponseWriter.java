@@ -35,13 +35,13 @@ public class JsonResponseWriter<T> extends ResponseWriter<T, AwsProxyResponse> {
     protected AwsProxyResponse writeEntity(T value) throws JsonProcessingException {
         return new AwsProxyResponse(200, Collections.emptyMap(),
                         om.writeValueAsString(value))
-                    .addHeader(HttpHeaders.CONTENT_TYPE, MediaType.JSON_UTF_8.withoutParameters().toString());
+                    .addHeader(HttpHeaders.CONTENT_TYPE, MediaType.JSON_UTF_8.toString());
     }
 
     @Override
     protected AwsProxyResponse writeEntity(ResponseEntity<T> value) throws JsonProcessingException {
         return new AwsProxyResponse(value.getStatusCode(), value.getHeaders(),
                         om.writeValueAsString(value.getBody()))
-                    .addHeader(HttpHeaders.CONTENT_TYPE, MediaType.JSON_UTF_8.withoutParameters().toString());
+                    .addHeader(HttpHeaders.CONTENT_TYPE, MediaType.JSON_UTF_8.toString());
     }
 }

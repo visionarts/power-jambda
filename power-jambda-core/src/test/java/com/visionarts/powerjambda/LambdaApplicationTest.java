@@ -49,7 +49,7 @@ public class LambdaApplicationTest {
 
     private static final String REQUEST_JSON_TEMPLATE = "requests/awsproxyrequest_api-gateway.json";
     private static final String CONTENT_TYPE = "Content-Type";
-    private static final String APPLICATION_JSON = "application/json";
+    private static final String APPLICATION_JSON = "application/json; charset=utf-8";
     private static Context mockContext = new MockLambdaContext();
 
     private InputStream requestJsonStream;

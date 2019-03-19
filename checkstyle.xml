@@ -32,9 +32,6 @@
         <module name="SuppressionCommentFilter"/>
         <module name="SuppressWithNearbyCommentFilter"/>
 
-        <!-- Make the file contents available to the tree walker, so that we can check comments for rule suppression. -->
-        <module name="FileContentsHolder"/>
-
         <!-- Class names must match the file name in which they are defined. -->
         <module name="OuterTypeFilename"/>
 
@@ -75,9 +72,7 @@
         <module name="NeedBraces"/>
 
         <!-- Left curly braces cannot be placed on the next line. -->
-        <module name="LeftCurly">
-            <property name="maxLineLength" value="130"/>
-        </module>
+        <module name="LeftCurly"/>
 
         <!-- Braces must not be empty for most language constructs. -->
         <module name="EmptyBlock">

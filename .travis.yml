@@ -20,6 +20,8 @@ after_success:
 before_deploy:
   - gpg --version
   - gpg2 --version
+  - echo allow-loopback-pinentry >> ~/.gnupg/gpg-agent.conf
+  - gpgconf --kill gpg-agent
   - openssl aes-256-cbc -K $encrypted_e766f065cea8_key -iv $encrypted_e766f065cea8_iv -in ./cd/gpg.key.enc -d | gpg2 -q --import --no-tty --batch --yes
 
 deploy:

@@ -12,9 +12,6 @@ RELEASE_TYPE=${1:-snapshot}
 VERSION="$2"
 MAVEN_RELEASE_SETTINGS=${CD_DIR}/settings.xml
 
-GPG_TTY=$(tty)
-export GPG_TTY
-
 
 if [ "${RELEASE_TYPE}" == "release" ] && [ ! -z "${VERSION}" ]; then
   echo -e "[INFO] on a tag -> set pom.xml <version> to ${VERSION}"

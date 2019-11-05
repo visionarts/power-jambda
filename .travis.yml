@@ -18,7 +18,7 @@ after_success:
   - bash <(curl -s https://codecov.io/bash)
 
 before_deploy:
-  - openssl aes-256-cbc -K $encrypted_e766f065cea8_key -iv $encrypted_e766f065cea8_iv -in ./cd/gpg.key.enc -d | gpg2 -q --import
+  - openssl aes-256-cbc -K $encrypted_e766f065cea8_key -iv $encrypted_e766f065cea8_iv -in ./cd/gpg.key.enc -d | gpg2 -q --import --no-tty --batch --yes
 
 deploy:
   # deploy snapshot version to maven central

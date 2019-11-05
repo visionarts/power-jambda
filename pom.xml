@@ -251,6 +251,13 @@
                 </goals>
               </execution>
             </executions>
+            <configuration>
+              <executable>gpg2</executable>
+              <gpgArguments>
+                <gpgArgument>--pinentry-mode</gpgArgument>
+                <gpgArgument>loopback</gpgArgument>
+              </gpgArguments>
+            </configuration>
           </plugin>
           <plugin>
             <groupId>org.sonatype.plugins</groupId>

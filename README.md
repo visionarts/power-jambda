@@ -1,7 +1,7 @@
 # Power-Jambda
 
 [![GitHub license](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://raw.githubusercontent.com/visionarts/power-jambda/master/LICENSE)
-[![Build Status](https://travis-ci.org/visionarts/power-jambda.svg?branch=master)](https://travis-ci.org/visionarts/power-jambda)
+[![CI with Maven](https://github.com/visionarts/power-jambda/actions/workflows/action.yml/badge.svg)](https://github.com/visionarts/power-jambda/actions/workflows/action.yml)
 [![Coverage Status](https://codecov.io/gh/visionarts/power-jambda/branch/master/graph/badge.svg)](https://codecov.io/gh/visionarts/power-jambda)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.visionarts/power-jambda-pom/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.visionarts/power-jambda-pom)
 [![Javadocs](http://javadoc.io/badge/com.visionarts/power-jambda-core.svg)](http://javadoc.io/doc/com.visionarts/power-jambda-core)
@@ -19,7 +19,7 @@ in your project is with a dependency management system
   <dependency>
     <groupId>com.visionarts</groupId>
     <artifactId>power-jambda-core</artifactId>
-    <version>0.9.15</version>
+    <version>0.9.16</version>
   </dependency>
 </dependencies>
 ```

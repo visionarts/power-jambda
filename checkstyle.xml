@@ -27,6 +27,12 @@
                   default="checkstyle-suppressions.xml"/>
     </module>
 
+    <!-- Enforce maximum line lengths. -->
+    <module name="LineLength">
+        <property name="max" value="130"/>
+        <property name="ignorePattern" value="a href|href|http://|https://|ftp://"/>
+    </module>
+
     <module name="TreeWalker">
         <!-- Allow suppressing rules via comments. -->
         <module name="SuppressionCommentFilter"/>
@@ -51,12 +57,6 @@
             <property name="allowEscapesForControlCharacters" value="true"/>
             <property name="allowByTailComment" value="true"/>
             <property name="allowNonPrintableEscapes" value="true"/>
-        </module>
-
-        <!-- Enforce maximum line lengths. -->
-        <module name="LineLength">
-            <property name="max" value="130"/>
-            <property name="ignorePattern" value="^package.*|^import.*|a href|href|http://|https://|ftp://"/>
         </module>
 
         <!-- Stars must not be used in import statements. -->

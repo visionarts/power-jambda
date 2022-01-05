@@ -19,7 +19,7 @@ in your project is with a dependency management system
   <dependency>
     <groupId>com.visionarts</groupId>
     <artifactId>power-jambda-core</artifactId>
-    <version>0.9.16</version>
+    <version>0.9.17</version>
   </dependency>
 </dependencies>
 ```

@@ -54,19 +54,23 @@ import org.apache.logging.log4j.Logger;
  * }
  * </pre>
  */
-public final class LambdaApplication {
+public class LambdaApplication {
 
-    private static final Logger logger = LogManager.getLogger(LambdaApplication.class);
-    private static final String APPLICATION_NAME = LambdaApplication.class.getSimpleName();
+    protected static final Logger logger = LogManager.getLogger(LambdaApplication.class);
+    protected static final String APPLICATION_NAME = LambdaApplication.class.getSimpleName();
 
-    private static LambdaApplication application;
+    protected static LambdaApplication application;
 
-    private final ApplicationContext applicationContext;
-    private final ActionRouter router;
-    private final ObjectMapper om;
+    protected ApplicationContext applicationContext;
+    protected ActionRouter router;
+    protected ObjectMapper om;
 
     static {
         initialize();
+    }
+
+    protected LambdaApplication() {
+        this(LambdaApplication.class);
     }
 
     private LambdaApplication(Class<?> mainApplicationClazz) {
@@ -130,7 +134,7 @@ public final class LambdaApplication {
         application = null;
     }
 
-    private void handle(InputStream input, OutputStream output, Context context) throws Exception {
+    public void handle(InputStream input, OutputStream output, Context context) throws Exception {
         LambdaLoggerHelper.putThreadContext(context);
         logger.debug("Starting request handler: requestId: {}", context.getAwsRequestId());
         try {
@@ -144,7 +148,7 @@ public final class LambdaApplication {
         }
     }
 
-    private AwsProxyRequest parseRequest(InputStream input)
+    protected AwsProxyRequest parseRequest(InputStream input)
             throws ClientErrorException, InternalErrorException {
         try {
             AwsProxyRequest request = om.readValue(input, AwsProxyRequest.class);
@@ -157,7 +161,7 @@ public final class LambdaApplication {
         }
     }
 
-    private void writeResponse(AwsProxyResponse response, OutputStream output) {
+    protected void writeResponse(AwsProxyResponse response, OutputStream output) {
         logger.debug("Writing response: {}", () -> Utils.writeValueAsString(response));
         try {
             om.writeValue(output, response);

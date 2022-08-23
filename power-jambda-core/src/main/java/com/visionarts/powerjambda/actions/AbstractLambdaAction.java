@@ -77,7 +77,7 @@ public abstract class AbstractLambdaAction<T, ActionResultT>
     }
 
     @Override
-    protected final void afterHandle(ActionRequest<T> actionRequest, Context context) throws Exception {
+    protected final void afterHandle(ActionRequest<T> actionRequest, Context context) {
         try {
             afterAction(actionRequest, context);
         } finally {
@@ -109,8 +109,9 @@ public abstract class AbstractLambdaAction<T, ActionResultT>
     @Override
     protected UnsafeBiConsumer<ActionRequest<T>, Context> loggerBeforeHandle() {
         return (r, c) ->
-                logger.info("Starting {} body: {} ({})",
-                    () -> this.getClass().getName(), () -> actionBodyType().getName(), () -> maskableJson(r.getBody()));
+            logger.info("Starting {} method: {} path: {} params: {} body: {} ({})",
+                () -> this.getClass().getName(), r::getMethod, r::getPath, r::getPathParameters,
+                () -> actionBodyType().getName(), () -> maskableJson(r.getBody()));
     }
 
     @Override

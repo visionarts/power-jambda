@@ -134,7 +134,7 @@ public class LambdaApplication {
         application = null;
     }
 
-    protected void handle(InputStream input, OutputStream output, Context context) throws Exception {
+    public void handle(InputStream input, OutputStream output, Context context) throws Exception {
         LambdaLoggerHelper.putThreadContext(context);
         logger.debug("Starting request handler: requestId: {}", context.getAwsRequestId());
         try {

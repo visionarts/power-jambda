@@ -67,7 +67,7 @@ public class OverrideLambdaApplicationTest {
         }
 
         @Override
-        protected void handle(InputStream input, OutputStream output, Context context) throws Exception {
+        public void handle(InputStream input, OutputStream output, Context context) throws Exception {
 
             AwsProxyResponse response = new ActionRouter(this.applicationContext) {
                 @Override

@@ -26,9 +26,9 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import com.visionarts.powerjambda.utils.ReflectionUtils;
-
-
+/**
+ * Test case for {@link ReflectionUtils} class.
+ */
 public class ReflectionUtilsTest {
 
     public static enum Types {

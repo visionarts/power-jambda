@@ -21,8 +21,6 @@ import java.io.OutputStream;
 import java.util.function.Consumer;
 
 import com.amazonaws.services.lambda.runtime.Context;
-import com.visionarts.powerjambda.ApplicationContext;
-import com.visionarts.powerjambda.LambdaApplication;
 
 /**
  * For test class.

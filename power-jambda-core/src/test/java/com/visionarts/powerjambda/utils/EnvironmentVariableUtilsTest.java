@@ -20,19 +20,13 @@ import static org.junit.Assert.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
-import com.visionarts.powerjambda.utils.EnvironmentVariableUtils;
-
-import mockit.Mock;
-import mockit.MockUp;
 
 /**
- * Test case for EnvironmentVarirableUtils.
+ * Test case for EnvironmentVariableUtils.
  *
  */
 public class EnvironmentVariableUtilsTest {
@@ -56,6 +50,7 @@ public class EnvironmentVariableUtilsTest {
     }
 
     private static final Map<String, String> TestEnvValues = new HashMap<>();
+    private static final Function<String, String> mockFetcher = key -> TestEnvValues.get(key);
     static {
         TestEnvValues.put("TEST_STRING_VALUE", "string_value");
         TestEnvValues.put("TEST_INTEGER_VALUE", "1");
@@ -65,22 +60,9 @@ public class EnvironmentVariableUtilsTest {
         TestEnvValues.put("TEST_MAP_VALUE", "");
     }
 
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
-
-    @Before
-    public void setUp() throws Exception {
-        new MockUp<System>() {
-            @Mock
-            public String getenv(String key) {
-                return TestEnvValues.get(key);
-            }
-        };
-    }
-
     @Test
     public void newConfigurationInstanceTest() {
-        TestConfig config = EnvironmentVariableUtils.newConfigurationInstance(TestConfig.class);
+        TestConfig config = EnvironmentVariableUtils.newConfigurationInstance(TestConfig.class, mockFetcher);
         assertEquals("string_value", config.TEST_STRING_VALUE);
         assertEquals(Integer.valueOf(1), config.TEST_INTEGER_VALUE);
         assertEquals(1, config.TEST_INT_VALUE);
@@ -91,8 +73,8 @@ public class EnvironmentVariableUtilsTest {
 
     @Test
     public void newConfigurationInstanceNotSupportedTest() {
-        expectedException.expect(RuntimeException.class);
-
-        EnvironmentVariableUtils.newConfigurationInstance(TestConfigNotSupported.class);
+        assertThrows(RuntimeException.class, () -> {
+            EnvironmentVariableUtils.newConfigurationInstance(TestConfigNotSupported.class, mockFetcher);
+        });
     }
 }

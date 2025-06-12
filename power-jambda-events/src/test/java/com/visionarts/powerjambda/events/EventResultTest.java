@@ -19,11 +19,7 @@ package com.visionarts.powerjambda.events;
 import static org.junit.Assert.*;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
-import com.visionarts.powerjambda.events.Result;
 
 
 /**
@@ -33,10 +29,6 @@ import com.visionarts.powerjambda.events.Result;
 public class EventResultTest {
 
     //private static final ObjectMapper om = new ObjectMapper();
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
 
     @Before
     public void setUp() throws Exception {

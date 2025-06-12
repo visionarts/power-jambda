@@ -22,10 +22,7 @@ import java.nio.ByteBuffer;
 import java.util.Base64;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
@@ -38,10 +35,6 @@ public class AttributeValueTest {
     private static final ObjectMapper om = new ObjectMapper();
 
     private AttributeValue attributeValue;
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
-
 
     @Before
     public void setUp() throws Exception {

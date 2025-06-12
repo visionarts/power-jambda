@@ -24,22 +24,16 @@ import java.util.stream.Stream;
 import com.google.common.collect.ImmutableMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
 import static com.visionarts.powerjambda.utils.FunctionalUtils.toBiConsumer;
 import static com.visionarts.powerjambda.utils.FunctionalUtils.toConsumer;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
- * Test case for FunctionalUtils.
+ * Test case for {@link FunctionalUtils} class.
  *
  */
 public class FunctionalUtilsTest {
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     private static final Logger logger = LogManager.getLogger(FunctionalUtilsTest.class);
 
@@ -66,10 +60,10 @@ public class FunctionalUtilsTest {
 
     @Test
     public void exceptionsForConsumersAreConverted() {
-        thrown.expect(RuntimeException.class);
-        thrown.expectMessage("Duh, something went wrong");
-
-        Stream.of(true).forEach(toConsumer(this::consumerMethodWithChecked, logger));
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            Stream.of(true).forEach(toConsumer(this::consumerMethodWithChecked, logger));
+        });
+        assertEquals("Duh, something went wrong", exception.getCause().getMessage());
     }
 
     @Test
@@ -80,11 +74,11 @@ public class FunctionalUtilsTest {
 
     @Test
     public void exceptionsForBiConsumersAreConverted() {
-        thrown.expect(RuntimeException.class);
-        thrown.expectMessage("Duh, something went wrong dummy");
-
-        ImmutableMap.of(true, "dummy")
-                .forEach(toBiConsumer(this::biConsumerMethodWithChecked, logger));
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            ImmutableMap.of(true, "dummy")
+                    .forEach(toBiConsumer(this::biConsumerMethodWithChecked, logger));
+        });
+        assertEquals("Duh, something went wrong dummy", exception.getCause().getMessage());
     }
 
     private void consumerMethodWithChecked(Boolean shouldThrow) throws Exception {

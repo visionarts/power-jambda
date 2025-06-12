@@ -24,10 +24,7 @@ import java.io.UncheckedIOException;
 
 import com.visionarts.powerjambda.events.model.DynamoDbEvent;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
 import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.visionarts.powerjambda.ApplicationContext;
@@ -46,10 +43,6 @@ public class DynamoDbEventHandlerTest {
     private static final Context mockContext = new MockLambdaContext();
 
     private DynamoDbEventHandler handler;
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
-
 
     @Before
     public void setUp() throws Exception {

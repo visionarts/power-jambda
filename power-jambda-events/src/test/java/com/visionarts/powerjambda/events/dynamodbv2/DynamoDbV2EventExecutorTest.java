@@ -27,10 +27,7 @@ import java.util.function.Function;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.util.IOUtils;
 import com.visionarts.powerjambda.ApplicationContext;
@@ -51,9 +48,6 @@ public class DynamoDbV2EventExecutorTest {
 
     private DynamoDbV2EventExecutor executor;
     private InputStream input;
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
 
     @SuppressWarnings("unused")
     private static class TestEventBody {

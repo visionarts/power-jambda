@@ -24,10 +24,7 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
 import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.visionarts.powerjambda.testing.MockLambdaContext;
@@ -53,10 +50,6 @@ public class EventApplicationTest {
     private InputStream s3Event;
     private InputStream scheduledEvent;
     private ByteArrayOutputStream response;
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
 
     @Before
     public void setUp() throws Exception {

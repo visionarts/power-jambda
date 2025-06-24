@@ -17,7 +17,6 @@
 package com.visionarts.powerjambda.actions;
 
 import com.amazonaws.services.lambda.runtime.Context;
-import com.visionarts.powerjambda.actions.AbstractLambdaAction;
 import com.visionarts.powerjambda.annotations.Route;
 import com.visionarts.powerjambda.exceptions.ClientErrorException;
 import com.visionarts.powerjambda.exceptions.InternalErrorException;

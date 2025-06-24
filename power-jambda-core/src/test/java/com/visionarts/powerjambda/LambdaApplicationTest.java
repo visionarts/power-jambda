@@ -27,11 +27,9 @@ import com.visionarts.powerjambda.actions.models.Person;
 import com.visionarts.powerjambda.testing.AwsProxyRequestBuilder;
 import com.visionarts.powerjambda.testing.MockLambdaContext;
 import com.visionarts.powerjambda.testutils.JsonUtils;
-import mockit.Deencapsulation;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.powermock.reflect.Whitebox;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -54,10 +52,6 @@ public class LambdaApplicationTest {
 
     private InputStream requestJsonStream;
     private OutputStream output;
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
-
 
     @Before
     public void setUp() throws Exception {
@@ -102,7 +96,7 @@ public class LambdaApplicationTest {
                 .body(expect)
                 .buildAsStream();
 
-        Deencapsulation.invoke(LambdaApplication.class, "initialize");
+        Whitebox.invokeMethod(LambdaApplication.class, "initialize");
 
         TestLambdaApplication.lambdaHandler(input, output, mockContext,
                 appContext -> map.put("startupHandler", appContext));

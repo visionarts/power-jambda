@@ -16,6 +16,8 @@
 
 package com.visionarts.maskingjson;
 
+import static org.hamcrest.MatcherAssert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
@@ -25,13 +27,8 @@ import java.util.List;
 
 import org.hamcrest.Matchers;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.visionarts.maskingjson.MaskableObjectMapper;
-import com.visionarts.maskingjson.MaskableSensitiveData;
 
 public class MaskingJsonTest {
 
@@ -79,10 +76,6 @@ public class MaskingJsonTest {
         public MyBeanWithNestedStructure() {
         }
     }
-
-    /** Test rule. */
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     private ObjectMapper om;
 
@@ -146,18 +139,18 @@ public class MaskingJsonTest {
 
     @Test
     public void testOccurErrorCastError() throws Exception {
-        thrown.expect(IOException.class);
         Object obj = new Object() {
             @MaskableSensitiveData
             public Integer number = 1;
         };
 
-        om.writeValueAsString(obj);
+        assertThrows(IOException.class, () -> {
+            om.writeValueAsString(obj);
+        });
     }
 
     @Test
     public void testOccurErrorCastErrorInCollection() throws Exception {
-        thrown.expect(IOException.class);
         Object obj = new Object() {
             @MaskableSensitiveData
             public List<Object> ListIncludeErr = new ArrayList<>();
@@ -167,6 +160,8 @@ public class MaskingJsonTest {
             }
         };
 
-        om.writeValueAsString(obj);
+        assertThrows(IOException.class, () -> {
+            om.writeValueAsString(obj);
+        });
     }
 }

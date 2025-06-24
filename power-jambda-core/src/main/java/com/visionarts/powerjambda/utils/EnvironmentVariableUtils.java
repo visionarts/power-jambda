@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * Helper class for getting environment variables on AWS Lambda runtime.<br>
@@ -82,7 +83,26 @@ public final class EnvironmentVariableUtils {
      * @return The new configuration instance
      */
     public static <C> C newConfigurationInstance(Class<C> configurationClazz) {
+        return newConfigurationInstance(configurationClazz, System::getenv);
+    }
+
+    /**
+     * Instantiates the given configuration class from Environment variables on AWS Lambda.<br>
+     * <br>
+     * Note: The configuration class must have the following rules. <br>
+     *       - Need a constructor with no arguments <br>
+     *       - The field type is public and available in [Boolean/boolean/String/Integer/int] <br>
+     *       - The modifier of the field must not be final <br>
+     *       - Search field's name from Environment variables when getting an Environment value <br>
+     *
+     * @param <C> The configuration class
+     * @param configurationClazz The configuration class to instantiate
+     * @param envValFetcher The function to fetch environment value for using test
+     * @return The new configuration instance
+     */
+    public static <C> C newConfigurationInstance(Class<C> configurationClazz, Function<String, String> envValFetcher) {
         Objects.requireNonNull(configurationClazz);
+        Objects.requireNonNull(envValFetcher);
         Utils.require(configurationClazz,
             FunctionalUtils.not(Class::isInterface),
             () -> new IllegalArgumentException("Specified class is an interface : " + configurationClazz.toString()));
@@ -90,15 +110,15 @@ public final class EnvironmentVariableUtils {
         try {
             C configuration = configurationClazz.getConstructor().newInstance();
             Arrays.stream(configurationClazz.getFields())
-                .forEach(field -> fieldSetFromEnvVal(field, configuration));
+                .forEach(field -> fieldSetFromEnvVal(field, configuration, envValFetcher));
             return configuration;
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static void fieldSetFromEnvVal(Field field, Object targetObject) {
-        String value = System.getenv(field.getName());
+    private static void fieldSetFromEnvVal(Field field, Object targetObject, Function<String, String> envValFetcher) {
+        String value = envValFetcher.apply(field.getName());
         if (value == null) { // skip if not exist on environment
             return;
         }

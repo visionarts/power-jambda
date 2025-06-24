@@ -21,21 +21,17 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
 import com.amazonaws.services.lambda.runtime.Context;
 import com.visionarts.powerjambda.AwsProxyResponse;
 import com.visionarts.powerjambda.actions.JsonResponseWriter;
 import com.visionarts.powerjambda.actions.TestActionWithExceptionHandler;
 import com.visionarts.powerjambda.actions.TestActionWithoutExceptionHandler;
 import com.visionarts.powerjambda.actions.TestActionWithExceptionHandler.TestErrorBody;
-import com.visionarts.powerjambda.exceptions.DefaultActionExceptionResolver;
-import com.visionarts.powerjambda.exceptions.InternalErrorException;
 import com.visionarts.powerjambda.testutils.JsonUtils;
 
-import mockit.Mocked;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 
 /**
@@ -49,14 +45,12 @@ public class DefaultActionExceptionResolverTest {
 
     private DefaultActionExceptionResolver<AwsProxyResponse> resolver;
 
-    @Mocked
+    @Mock
     private Context mockContext;
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     @Before
     public void setUp() throws Exception {
+        MockitoAnnotations.openMocks(this);
         resolver = new DefaultActionExceptionResolver<>(new JsonResponseWriter<>());
     }
 
@@ -79,14 +73,14 @@ public class DefaultActionExceptionResolverTest {
     @Test
     public void throwsExceptionWhenNotExistsExceptionHandlerTest() throws Exception {
 
-        thrown.expect(InternalErrorException.class);
-        thrown.expectMessage(startsWith("Not found any ExceptionHandler for"));
-
         TestActionWithoutExceptionHandler action = new TestActionWithoutExceptionHandler();
-        resolver.handleException(
-                new RuntimeException("Occur exception test"),
-                action, mockContext);
 
+        Exception exception = assertThrows(InternalErrorException.class, () -> {
+            resolver.handleException(
+                    new RuntimeException("Occur exception test"),
+                    action, mockContext);
+        });
+        assertThat(exception.getMessage(), startsWith("Not found any ExceptionHandler for"));
     }
 
 }

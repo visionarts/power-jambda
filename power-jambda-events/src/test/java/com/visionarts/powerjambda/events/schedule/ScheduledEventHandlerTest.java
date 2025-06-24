@@ -21,20 +21,16 @@ import static org.junit.Assert.*;
 import java.io.InputStream;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
 import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.visionarts.powerjambda.ApplicationContext;
 import com.visionarts.powerjambda.actions.TestScheduledAction;
 import com.visionarts.powerjambda.events.model.EventActionRequest;
 import com.visionarts.powerjambda.events.model.ScheduledEvent;
-import com.visionarts.powerjambda.models.EmptyActionBody;
 import com.visionarts.powerjambda.testing.MockLambdaContext;
 
-import mockit.Expectations;
+import org.mockito.Mockito;
 
 
 /**
@@ -50,10 +46,6 @@ public class ScheduledEventHandlerTest {
     private ScheduledEvent event;
     private ScheduledEventHandler handler;
 
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
-
-
     @Before
     public void setUp() throws Exception {
         handler = new ScheduledEventHandler(new ApplicationContext(this.getClass()));
@@ -65,12 +57,8 @@ public class ScheduledEventHandlerTest {
     @Test
     public void testScheduledEventHandlerSuccessfully() throws Exception {
 
-        new Expectations(TestScheduledAction.class) {
-            {
-                new TestScheduledAction().handle((EventActionRequest<EmptyActionBody>)any, (Context)any);
-                times = 1;
-            }
-        };
+        TestScheduledAction mockAction = Mockito.mock(TestScheduledAction.class);
+        Mockito.when(mockAction.handle(Mockito.any(EventActionRequest.class), Mockito.any(Context.class))).thenReturn(null);
 
         ScheduledEventResult result = handler.handleRequest(event, mockContext);
         assertEquals(1, result.getSuccessItems().size());

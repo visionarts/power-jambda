@@ -24,19 +24,15 @@ import java.io.UncheckedIOException;
 
 import com.visionarts.powerjambda.events.model.SnsEvent;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
 import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.visionarts.powerjambda.ApplicationContext;
 import com.visionarts.powerjambda.actions.TestAction1;
-import com.visionarts.powerjambda.actions.models.TestAction1Body;
 import com.visionarts.powerjambda.events.model.EventActionRequest;
 import com.visionarts.powerjambda.testing.MockLambdaContext;
 
-import mockit.Expectations;
+import org.mockito.Mockito;
 
 
 /**
@@ -51,10 +47,6 @@ public class SnsEventHandlerTest {
 
     private SnsEventHandler handler;
 
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
-
-
     @Before
     public void setUp() throws Exception {
         handler = new SnsEventHandler(new ApplicationContext(this.getClass()));
@@ -65,12 +57,8 @@ public class SnsEventHandlerTest {
     public void testSNSEventHandlerSuccessfully() throws Exception {
         InputStream input = this.getClass().getClassLoader().getResourceAsStream(SNS_REQUEST_JSON_TEMPLATE);
 
-        new Expectations(TestAction1.class) {
-            {
-                new TestAction1().handle((EventActionRequest<TestAction1Body>)any, (Context)any);
-                times = 1;
-            }
-        };
+        TestAction1 mockAction = Mockito.mock(TestAction1.class);
+        Mockito.when(mockAction.handle(Mockito.any(EventActionRequest.class), Mockito.any(Context.class))).thenReturn(null);
 
         SnsEventResult result = handler.handleRequest(supplyEvent(input), mockContext);
         assertEquals(1, result.getSuccessItems().size());

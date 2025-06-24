@@ -23,10 +23,7 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.s3.event.S3EventNotification;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,7 +32,7 @@ import com.visionarts.powerjambda.events.actions.S3EventAction;
 import com.visionarts.powerjambda.events.model.EventActionRequest;
 import com.visionarts.powerjambda.testing.MockLambdaContext;
 
-import mockit.Expectations;
+import org.mockito.Mockito;
 
 
 /**
@@ -50,10 +47,6 @@ public class S3EventHandlerTest {
 
     private S3EventHandler handler;
 
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
-
-
     @Before
     public void setUp() throws Exception {
         handler = new S3EventHandler(new ApplicationContext(this.getClass()), S3EventAction.class);
@@ -64,12 +57,8 @@ public class S3EventHandlerTest {
     public void testS3EventViaSNSEventHandlerSuccessfully() throws Exception {
         InputStream input = this.getClass().getClassLoader().getResourceAsStream(S3_REQUEST_JSON_TEMPLATE);
 
-        new Expectations(S3EventAction.class) {
-            {
-                new S3EventAction().handle((EventActionRequest<S3EventNotification>)any, (Context)any);
-                times = 1;
-            }
-        };
+        S3EventAction mockAction = Mockito.mock(S3EventAction.class);
+        Mockito.when(mockAction.handle(Mockito.any(EventActionRequest.class), Mockito.any(Context.class))).thenReturn(null);
 
         S3EventResult result = handler.handleRequest(supplyEvent(input), mockContext);
         assertEquals(1, result.getSuccessItems().size());
